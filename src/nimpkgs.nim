@@ -170,7 +170,7 @@ proc searchBar(): Vnode =
 proc headerBar(): VNode =
   result = buildHtml(tdiv(class = "mt-5 mx-5 flex flex-wrap")):
     tdiv(class = "flex items-center my-3 grow"):
-      img(src = "/img/logo.svg", class = "inline h-1em md:h-2em px-1")
+      img(src = "img/logo.svg", class = "inline h-1em md:h-2em px-1")
       span(class = "font-bold md:text-4xl text-lg",
           style = "font-variation-settings: 'CASL' 1".toCss):
         text "pkgs"
