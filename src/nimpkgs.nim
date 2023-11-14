@@ -1,9 +1,7 @@
-import std/[jsconsole, strutils, sets, sequtils, random]
+import std/[strutils, sets, sequtils, random]
 include karax / prelude
-import karax / vstyles
 
-import packages
-import button
+import packages, button
 
 type
   Query = object
@@ -11,12 +9,14 @@ type
 
 randomize()
 
+
 var
   filteredPackages: seq[Package] = allPackages
   searchInput: kstring = "".kstring
 const
   packagesGitUrl = "https://github.com/nim-lang/packages/blob/" & packagesHash & "/packages.json"
   numPackages = allPackages.len
+  numTags = allTags.len
   colors = [
     "flamingo",
     "pink",
@@ -33,14 +33,20 @@ const
     "lavender"
   ]
 let
-  accent = colors.sample()
+  accent = (" " & colors.sample() & " ").kstring
   textStyle = (" text-ctp-" & accent & " ").kstring
   borderStyle = (" b-ctp-" & accent & " ").kstring
-  randomIndices = [
-    rand(numPackages-1), rand(numPackages-1), rand(numPackages-1), rand(
-        numPackages-1), rand(numPackages-1),
-  rand(numPackages-1), rand(numPackages-1), rand(numPackages-1), rand(
-      numPackages-1), rand(numPackages-1)]
+  randomPkgIndices = [
+      rand(numPackages-1), rand(numPackages-1), rand(numPackages-1),
+      rand(numPackages-1), rand(numPackages-1), rand(numPackages-1),
+      rand(numPackages-1), rand(numPackages-1), rand(numPackages-1),
+      rand(numPackages-1)]
+  randomTagIndices = [
+      rand(numTags-1), rand(numTags-1), rand(numTags-1),
+      rand(numTags-1), rand(numTags-1), rand(numTags-1)
+  ]
+
+
 
 proc parseQuery(s: kstring): Query =
   result = Query()
@@ -95,8 +101,7 @@ proc noProtocol(s: kstring): kstring = kstring(($s).replace("http://",
 
 proc toDom(pkg: Package): VNode =
   result = buildHtml(tdiv(class = "flex flex-col bg-ctp-crust rounded-xl my-5 p-5")):
-    h2(class = (textStyle & "font-black md:text-2xl text-lg").kstring,
-        style = "font-variation-settings: 'CASL' 1".toCss):
+    h2(class = (textStyle & "font-black md:text-2xl text-lg font-casual").kstring):
       text ("# " & pkg.name).kstring
     if pkg.alias != "":
       tdiv:
@@ -152,8 +157,13 @@ proc getSearchInput() =
   searchInput = getVNodeById("search").getInputText
   searchPackages(parseQuery(searchInput))
 
+proc render(t: Tag): VNode =
+  result = buildHtml(tdiv(class = "bg-ctp-mantle m-1 p-1 rounded hover:text-ctp-mauve")):
+    tdiv(onClick = setSearch("tag:" & t.name)):
+      text t.name & "|" & kstring($t.packages)
+
 proc searchBar(): Vnode =
-  result = buildHtml(tdiv(class = "flex flex-col lg:flex-row items-center my-5")):
+  result = buildHtml(tdiv(class = "flex flex-col md:flex-row md:items-center md:my-5")):
     tdiv(class = "flex flex-row my-2"):
       input(`type` = "text", class = "border-1 bg-ctp-crust rounded mx-3 p-2".kstring & borderStyle, `id` = "search",
             placeholder = "query", value = searchInput,
@@ -161,25 +171,33 @@ proc searchBar(): Vnode =
       button(`type` = "button", class = "border-1 rounded p-2".kstring &
           borderStyle, onClick = getSearchInput):
         text "search"
-    tdiv(class = "text-xs md:mx-5 flex flex-col md:flex-row"):
+    #[
+    tdiv(class = "md:mx-5 flex flex-col items-center"):
       tdiv: text "examples: "
-      tdiv:
-        span(class = "bg-ctp-surfacetwo rounded text-ctp-subtextone p-1 grow-0"):
-          text "tag:database sqlite | license:MIT javascript"
+      tdiv(class="flex flex-col"):
+        for msg in ["tag:database sqlite","license:MIT javascript"]:
+          span(class = "bg-ctp-mantle rounded text-ctp-subtextone m-1 p-1 text-xs"):
+            text msg 
+    ]#
+    tdiv(class = "flex flex-col mx-5"):
+      tdiv: text "explore tags:"
+      tdiv(class = "flex flex-wrap text-sm"):
+        for idx in randomTagIndices:
+          allTags[idx].render
+
 
 proc headerBar(): VNode =
   result = buildHtml(tdiv(class = "mt-5 mx-5 flex flex-wrap")):
     tdiv(class = "flex items-center my-3 grow"):
       img(src = "img/logo.svg", class = "inline h-1em md:h-2em px-1")
-      span(class = "font-bold md:text-4xl text-lg",
-          style = "font-variation-settings: 'CASL' 1".toCss):
+      span(class = "font-bold md:text-4xl text-lg font-casual"):
         text "pkgs"
     label(`for` = "menu-toggle",
-          class = "cursor-pointer md:hidden flex items-center px-3 py-2"
+          class = "cursor-pointer lg:hidden flex items-center px-3 py-2"
       ):
       text "menu"
     input(class = "hidden", type = "checkbox", `id` = "menu-toggle")
-    tdiv(class = "md:flex md:items-center justify-between hidden w-full md:w-auto",
+    tdiv(class = "lg:flex lg:items-center justify-between hidden w-full lg:w-auto",
         `id` = "menu"):
       nav:
         ul(class = "md:flex items-center"):
@@ -187,8 +205,8 @@ proc headerBar(): VNode =
               (packagesGitUrl, "nim-lang/packages:" & packagesHashAbbr),
               ("http://github.com/daylinmorgan/nimpkgs", "source")
               ]:
-            li(class = "px-1"):
-              a(href = url.kstring, class = "text-ctp-surfacetwo text-xs"):
+            li(class = "p-2 hover:bg-ctp-mantle rounded text-sm"):
+              a(href = url.kstring, class = accent):
                 text msg
 
 proc includedLinks(pkgs: seq[Package]): HashSet[char] =
@@ -196,9 +214,9 @@ proc includedLinks(pkgs: seq[Package]): HashSet[char] =
 
 proc letterlink(): VNode =
   let activeLinks = includedLinks(filteredPackages)
-  result = buildHtml(tdiv(class = "flex flex-wrap md:text-xl text-md space-x-4 capitalize")):
+  result = buildHtml(tdiv(class = "flex flex-wrap md:text-xl text-lg capitalize w-full justify-evenly gap-x-2 md:gap-x-auto")):
     for l in LowercaseLetters:
-      tdiv:
+      tdiv(class = "w-5"):
         if l in activeLinks:
           a(href = "#" & ($l).kstring):
             text $l
@@ -215,7 +233,7 @@ proc filteredPackagesDom(): VNode =
 
 
 proc createDom(): VNode =
-  result = buildHtml(tdiv(class = "sm:w-3/4 md:w-2/3 max-w-[95%] md:mx-auto mx-5 md:text-lg text-sm")):
+  result = buildHtml(tdiv(class = "md:w-3/4 max-w-[95%] md:mx-auto mx-5 md:text-lg text-sm")):
     headerBar()
     searchBar()
     letterlink()
@@ -223,7 +241,7 @@ proc createDom(): VNode =
       text ($filteredPackages.len & "/" & $allPackages.len) & " packages"
     if searchInput == "":
       tdiv():
-        for idx in randomIndices:
+        for idx in randomPkgIndices:
           allPackages[idx].toDom
         hr()
     filteredPackagesDom()
