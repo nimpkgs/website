@@ -3,6 +3,8 @@ name: 📄 Build Docs
 on:
   push:
   workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'
 
 jobs:
   build:
