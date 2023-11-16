@@ -1,7 +1,5 @@
 import std/[strutils, strformat]
 
---backend:js
-
 proc getCommitInfo*(): (string, string) =
   if not dirExists "src/packages":
     echo "cloning nim-lang/packages"
