@@ -133,7 +133,10 @@ dist
 ## 
 
 *.workspace
+nim.cfg
 site/uno.css
-site/nimpkgs.js
-src/nim.cfg
-src/packages
+site/app.js
+src/*.js
+
+# for debugging
+site/nimpkgs.json

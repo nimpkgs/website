@@ -1,56 +1,71 @@
-import std/[algorithm, strutils, tables]
-import karax/kbase
-
+import std/[
+  algorithm, asyncjs,
+  strutils, sugar, tables, times
+]
+import karax/[kbase]
 import jsony
 
-type
-  Package* = object
-    name*, url*, `method`*, description*, license*, web*, doc*, alias*: kstring
-    tags*: seq[kstring]
-  Tag* = object
-    name*: kstring
-    packages*: int
+export algorithm, tables, times, asyncjs, sugar
 
 proc parseHook*(s: string, i: var int, v: var kstring) =
   var str: string
   parseHook(s, i, str)
   v = cstring(str)
 
-proc cmpPkgs(a, b: Package): int =
-  cmp(toLowerAscii($a.name), toLowerAscii($b.name))
+type
+  Version* = object
+    tag*, hash*: kstring
+    time*: Time
 
-proc getPackages(): seq[Package] =
-  const packagesJsonStr = slurp "./packages/packages.json"
-  result = packagesJsonStr.fromJson(seq[Package])
-  result.sort(cmpPkgs)
+  NimPackage* = object
+    name*, url*, `method`*, description*,
+      license*, web*, doc*, alias*: kstring
+    lastCommitHash*: kstring
+    lastCommitTime*: Time
+    versions*: seq[Version]
+    tags*: seq[kstring]
+    deleted*: bool
+
+  NimPkgs* = object
+    updated*: Time
+    packagesHash*: kstring
+    packages*: OrderedTable[string, NimPackage]
+
+proc newHook*(p: var NimPackage) =
+  p.url = ""
+  p.alias = ""
+  p.`method` = ""
+  p.license = ""
+  p.web = ""
+  p.doc = ""
+  p.description = ""
+  p.alias = ""
+  p.tags = @[]
+
+proc newHook*(nimpkgs: var NimPkgs) =
+  nimpkgs.packagesHash = ""
+
+proc parseHook*(s: string, i: var int, v: var Time) =
+  var num: int
+  parseHook(s, i, num)
+  v = fromUnix(num)
+
+proc sortCommit*(a, b: NimPackage): int =
+  cmp(a.lastCommitTime, b.lastCommitTime)
+
+proc sortAlphabetical*(a, b: NimPackage): int =
+  cmp(a.name, b.name)
+
+proc sortVersion*(a, b: NimPackage): int =
+  let lengths = (a.versions.len, b.versions.len)
+  if lengths[0] > 0 and lengths[1] > 0:
+    result = cmp(a.versions[0].time, b.versions[0].time)
+  elif lengths[0] == 0 and lengths[1] == 0:
+    result = sortCommit(a, b)
+  elif lengths[0] == 0:
+    result = -1
+  else:
+    result = 1
 
 
-#[
-import strutils, tables, heapqueue, algorithm
-iterator topN[T](h: CountTable[T]|Table[T, int], n=10):
-    tuple[cnt: int; key: T] =
-  var q = initHeapQueue[tuple[cnt: int; key: T]]()
-  for key, cnt in h:
-    if q.len < n:
-      q.push((cnt, key))
-    elif cnt > q[0].cnt:  # retain 1st seen on tied cnt
-      discard q.replace((cnt, key))
-  while q.len > 0:        # q now has top n entries
-    yield q.pop
-]#
-
-proc getTags(pkgs: seq[Package]): seq[Tag] =
-  const minPackageCutoff = 10
-  var tags: seq[kstring]
-  for pkg in pkgs:
-    for tag in pkg.tags:
-      tags.add tag
-  for key, cnt in tags.toCountTable:
-    if cnt > minPackageCutoff:
-      result.add Tag(name: key, packages: cnt)
-
-const
-  packagesHash* {.strdefine.} = "master"
-  packagesHashAbbr* {.strdefine.} = "master"
-  allPackages* = getPackages()
-  allTags* = allPackages.getTags()
+proc isAlias*(p: NimPackage): bool {.inline.} = p.alias != ""

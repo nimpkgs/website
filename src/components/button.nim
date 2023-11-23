@@ -1,7 +1,5 @@
 import std/[dom, sugar]
-
-include karax/prelude
-import karax/vstyles
+import karax/[karax, karaxdsl, vdom, vstyles]
 
 proc showScrollToTop() =
   # TODO: only show button when scrolling up
@@ -18,14 +16,14 @@ proc scrollToTop*() =
   document.body.scrollTop = 0
   document.documentElement.scrollTop = 0
 
-document.addEventListener("scroll", (e: Event) => showScrollToTop())
+document.addEventListener("scroll", (e: dom.Event) => showScrollToTop())
 
 proc scrollToTopButton*(): VNode =
 
   result = buildHtml(tdiv):
     button(
       class =
-      " absolute fixed md:bottom-10 md:right-10 bottom-2 right-2 " &
+      " absolute fixed md:bottom-10 right-10 bottom-2 " &
       " md:p-5 p-2 cursor-pointer z-99 rounded " &
       " bg-ctp-rosewater hover:bg-ctp-mauve text-ctp-mantle ",
       `id` = "scrollBtn",

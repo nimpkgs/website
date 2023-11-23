@@ -1,9 +1,9 @@
 import fs from "fs/promises";
 import { variants } from "@catppuccin/palette";
-import { defineConfig, presetUno } from "unocss";
+import { defineConfig, presetUno, presetIcons } from "unocss";
 
-const generatePalette = () => {
-  const colors = {};
+const generatePalette = (): { [key: string]: string } => {
+  const colors: { [key: string]: string } = {};
 
   Object.keys(variants.mocha).forEach((colorName) => {
     const sanitizedName = colorName
@@ -27,7 +27,7 @@ export default defineConfig({
     },
     {
       layer: "mycss",
-      getCSS: ({ theme }) => `
+      getCSS: () => `
     body {
       font-family: 'Recursive', monospace;
       font-variation-settings: 'MONO' 1;
@@ -37,28 +37,53 @@ export default defineConfig({
 		}
     a {
       text-decoration: underline dotted;
-      color: ${theme.colors.ctp.rosewater};
+      color: ${catppuccinColors.rosewater};
     }
     a:hover {
-      color: ${theme.colors.ctp.mauve};
+      color: ${catppuccinColors.mauve};
+      cursor: pointer;
+    }
+    // loading animation
+    .lds-dual-ring {
+      display: inline-block;
+      width: 80px;
+      height: 80px;
+    }
+    .lds-dual-ring:after {
+      content: " ";
+      display: block;
+      width: 64px;
+      height: 64px;
+      margin: 8px;
+      border-radius: 50%;
+      border: 6px solid #fff;
+      border-color: #fff transparent #fff transparent;
+      animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
     `,
     },
   ],
   // accent color is dynamically generated 
   safelist: Object.keys(catppuccinColors).flatMap((key: string) => [`text-ctp-${key}`, `b-ctp-${key}`]),
-  presets: [presetUno()],
+  presets: [presetUno(), presetIcons()],
   rules: [
     ["font-casual", { "font-variation-settings": "'CASL' 1;" }],
     ["font-mono-casual", { "font-variation-settings": "'MONO' 1, 'CASL' 1;" }],
   ],
   shortcuts: {
-    btn: "border-1 border-solid rounded border-ctp-mauve flex flex-row hover:border-ctp-sky hover:text-ctp-rosewater m-2",
-    // link: "underline text-ctp-rosewater"
+    link: "cursor-pointer text-ctp-rosewater hover:text-ctp-mauve",
   },
   theme: {
     colors: {
-      ctp: generatePalette(),
+      ctp: catppuccinColors,
     },
   },
   layers: {
