@@ -98,7 +98,7 @@ proc render*(): VNode =
   pgCtx.update
   result =
     buildHtml(tdiv):
-      tdiv(class = "flex md:flex-row md: space-x-5"):
+      tdiv(class = "flex md:flex-row flex-col md:space-x-5"):
         searchBar(value = pgCtx.search)
         sortSelector()
       filteredPackagesDom()
