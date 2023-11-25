@@ -1,5 +1,5 @@
 import std/[algorithm, sugar]
-import karax/[karaxdsl, vdom, jstrutils]
+import karax/[kbase, karaxdsl, vdom, jstrutils]
 
 import ../[context, packages, style]
 import ../components/[tag, package]
@@ -14,7 +14,7 @@ proc versionTable(pkg: NimPackage): VNode =
     table(class = "table-auto w-full text-center"):
       tr:
         th: text "version"
-        th: text "release"
+        th: text "released"
         th: text "hash"
       for version in versions:
         tr:
@@ -43,6 +43,11 @@ proc renderLinks(pkg: NimPackage): VNode = buildHtml(tdiv):
         tdiv(class = "i-mdi-file-outline shrink-0")
         span: text pkg.doc.noProtocol
 
+proc getTimeSinceCommit(pkg: NimPackage): kstring =
+  if pkg.lastCommitTime == fromUnix(0): "unknown".jss
+  else:
+    let d = getTime() - pkg.lastCommitTime
+    d.inDays.jss & " days ago"
 
 proc renderPkgInfo(pkg: NimPackage): VNode =
   buildHtml:
@@ -56,6 +61,9 @@ proc renderPkgInfo(pkg: NimPackage): VNode =
       tdiv:
         tdiv: text "tags:"
         pkg.tags.renderTags
+      tdiv:
+        tdiv: text "last commit:"
+        text pkg.getTimeSinceCommit
       tdiv:
         tdiv: text "usage:"
         tdiv(class = "bg-ctp-surfacezero rounded my-2 mx-3 p-2 w-auto"):
