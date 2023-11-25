@@ -31,7 +31,7 @@ proc selectRandomTags*(ctx: Context): seq[kstring] =
   for tag, cnt in tagCounts:
     if cnt > 3: tags.add tag
 
-  while result.len < 5:
+  while result.len < 10:
     let tag = tags.sample()
     if tag notin result:
       result.add tag
