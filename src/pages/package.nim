@@ -35,12 +35,12 @@ proc renderLinks(pkg: NimPackage): VNode = buildHtml(tdiv):
   if pkg.web != "" and pkg.web != pkg.url:
     tdiv():
       a(href = pkg.web, class = "flex items-center space-x-2"):
-        tdiv(class = "i-mdi-web inline-block")
+        tdiv(class = "i-mdi-web shrink-0")
         span: text pkg.web.noProtocol
   if pkg.doc != "":
     tdiv():
       a(href = pkg.doc, class = "flex items-center space-x-2"):
-        tdiv(class = "i-mdi-file-outline inline-block")
+        tdiv(class = "i-mdi-file-outline shrink-0")
         span: text pkg.doc.noProtocol
 
 

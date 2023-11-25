@@ -29,7 +29,7 @@ proc projectUrl*(pkg: NimPackage): VNode =
 
   buildHtml:
     tdiv(class = "flex items-center space-x-2"):
-      tdiv(class = icon.jss)
+      tdiv(class = icon.jss & " shrink-0")
       a(href = pkg.url, class = if pkg.deleted: "line-through text-ctp-red" else: ""):
         text repoName.jss
 
