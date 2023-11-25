@@ -13,7 +13,7 @@ proc footerBar*(): VNode =
       packagesGitUrlBase & ctx.nimpkgs.packagesHash & "/packages.json".kstring,
       "nim-lang/packages:" & packagesAbbr
     )
-  links.add ("http://github.com/daylinmorgan/nimpkgs".kstring, "source".kstring)
+  links.add ("http://github.com/nimpkgs/website".kstring, "source".kstring)
   result = buildHtml(footer(class = "mt-auto md:mx-10 flex flex-col md:flex-row md:justify-between md:items-center mb-5")):
     if ctx.loaded:
       tdiv(class = "text-xs text-ctp-subtextzero px-1"):
