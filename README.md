@@ -12,18 +12,7 @@ A web UI is available at [nimble.directory](https://nimble.directory)([repo](htt
 But, there are some outstanding [issues](https://github.com/FedericoCeratto/nim-package-directory/issues/53) that have affected even my own packages.
 
 This site is client-only, powered by [karax](https://github.com/karaxnim/karax) and styled with [unocss](https://github.com/unocss/unocss).
-It provide a single page search UI over `nim-lang/packages`.
 This makes it trivial to deploy with Github Actions.
-
-## usage
-
-On page load 10 random packages and a set of tags will be selected. 
-Search can be modified by specifying fields.
-
-examples:
-- `tag:database sqlite`
-- `license:MIT web`
-
 
 ## license
 
