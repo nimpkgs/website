@@ -50,7 +50,7 @@ proc card*(pkg: NimPackage): VNode =
           text pkg.alias
     else:
       span(class = "md:text-xl my-2"): text pkg.description
-      tdiv(class = "flex flex-col text-xs md:text-lg overflow-x-scroll"):
+      tdiv(class = "flex flex-col text-xs md:text-lg overflow-x-auto"):
         tdiv(class = "flex flex-wrap"):
           for t in pkg.tags:
             tdiv(
