@@ -1,10 +1,11 @@
 import std/[
   algorithm, asyncjs,
-  strutils, sugar, tables, times
+  strutils, sugar, tables, times, uri
 ]
 import karax/[kbase]
 import jsony
 
+import ./utils
 export algorithm, tables, times, asyncjs, sugar
 
 proc parseHook*(s: string, i: var int, v: var kstring) =
@@ -69,3 +70,14 @@ proc sortVersion*(a, b: NimPackage): int =
 
 
 proc isAlias*(p: NimPackage): bool {.inline.} = p.alias != ""
+
+proc canonicalUrl*(p: NimPackage): kstring =
+  var uri = parseUri($p.url)
+  uri.path = uri.path.replace(".git")
+  # NOTE: why do I use this?
+  if uri.path[^1] == '/':
+    uri.path = uri.path[0..^2]
+  uri.query = ""
+  return uri.jss
+
+

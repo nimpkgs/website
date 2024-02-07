@@ -1,10 +1,14 @@
 import std/[algorithm, sugar]
-import karax/[kbase, karaxdsl, vdom, jstrutils]
+import karax/[kbase, karax, karaxdsl, kdom, vdom, jstrutils, ]
 
 import ../[context, packages, style]
 import ../components/[tag, package]
 import ../utils
 import notfound
+
+proc openLink(link: kstring): proc() =
+  result = proc() =
+    discard open(window, link, "_self")
 
 proc versionTable(pkg: NimPackage): VNode =
   var versions = pkg.versions
@@ -17,7 +21,10 @@ proc versionTable(pkg: NimPackage): VNode =
         th: text "released"
         th: text "hash"
       for version in versions:
-        tr:
+        tr(
+          onClick = openLink(pkg.canonicalUrl & "/tree/" & version.tag.jss),
+          class = "link"
+        ):
           td: text version.tag
           td: text version.time.format("yyyy-MM-dd")
           td: text ($version.hash)[0..8]

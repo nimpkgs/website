@@ -43,7 +43,7 @@ export default defineConfig({
       color: ${catppuccinColors.mauve};
       cursor: pointer;
     }
-    // loading animation
+    /* loading animation */
     .lds-dual-ring {
       display: inline-block;
       width: 80px;

@@ -9,4 +9,9 @@ task build, "build":
   exec "pnpm run build"
 
 task watch, "rebuild on change":
-  exec "watchexec -w src nim js -d:packagesHash:master -o:site/app.js src/app.nim"
+  exec (
+        "watchexec " &
+        "--project-origin . -w src " &
+        "nim js -d:packagesHash:master -o:site/app.js src/app.nim"
+      )
+
