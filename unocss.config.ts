@@ -1,16 +1,16 @@
 import fs from "fs/promises";
-import { variants } from "@catppuccin/palette";
+import { flavors } from "@catppuccin/palette";
 import { defineConfig, presetUno, presetIcons } from "unocss";
 
 const generatePalette = (): { [key: string]: string } => {
   const colors: { [key: string]: string } = {};
 
-  Object.keys(variants.mocha).forEach((colorName) => {
+  Object.keys(flavors.mocha.colors).forEach((colorName) => {
     const sanitizedName = colorName
       .replace("0", "zero")
       .replace("1", "one")
       .replace("2", "two");
-    colors[sanitizedName] = variants.mocha[colorName].hex;
+    colors[sanitizedName] = flavors.mocha.colors[colorName].hex;
   });
 
   return colors;
