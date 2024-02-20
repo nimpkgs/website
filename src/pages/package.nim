@@ -58,8 +58,8 @@ proc getTimeSinceCommit(pkg: NimPackage): kstring =
 
 proc renderPkgInfo(pkg: NimPackage): VNode =
   buildHtml:
-    tdiv(class = "space-y-5 text-2xl"):
-      tdiv(class = "md:text-4xl text-xl"):
+    tdiv(class = "space-y-5 text-lg"):
+      tdiv(class = "md:text-3xl"):
         text pkg.description
       pkg.renderLinks
       tdiv:
@@ -84,7 +84,7 @@ proc render*(packageName: string): VNode =
   let pkg = ctx.nimpkgs.packages[packageName]
   result = buildHtml(tdiv(class = "flex flex-col")):
     if pkg.deleted:
-      tdiv(class = "md:text-5xl text-2xl text-ctp-red my-5 "):
+      tdiv(class = "md:text-3xl text-2xl text-ctp-red my-5 "):
         tdiv(class = "flex items-center md:text-5xl text-2xl font-mono-casual font-black"):
           tdiv(class = "i-mdi-alert inline-block")
           span: text "WARNING!"
