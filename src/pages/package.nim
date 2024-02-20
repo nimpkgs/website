@@ -35,20 +35,21 @@ proc renderAlias(pkg: NimPackage): VNode = buildHtml:
     a(href = "#/pkg/" & pkg.alias):
       text pkg.alias
 
-proc renderLinks(pkg: NimPackage): VNode = buildHtml(tdiv):
-  tdiv: text "links:"
-  tdiv:
-    pkg.projectUrl
-  if pkg.web != "" and pkg.web != pkg.url:
-    tdiv():
-      a(href = pkg.web, class = "flex items-center space-x-2"):
-        tdiv(class = "i-mdi-web shrink-0")
-        span: text pkg.web.noProtocol
-  if pkg.doc != "":
-    tdiv():
-      a(href = pkg.doc, class = "flex items-center space-x-2"):
-        tdiv(class = "i-mdi-file-outline shrink-0")
-        span: text pkg.doc.noProtocol
+proc renderLinks(pkg: NimPackage): VNode =
+  buildHtml(tdiv(class = "overflow-auto")):
+    tdiv: text "links:"
+    tdiv:
+      pkg.projectUrl
+    if pkg.web != "" and pkg.web != pkg.url:
+      tdiv():
+        a(href = pkg.web, class = "flex items-center space-x-2"):
+          tdiv(class = "i-mdi-web shrink-0")
+          span: text pkg.web.noProtocol
+    if pkg.doc != "":
+      tdiv():
+        a(href = pkg.doc, class = "flex items-center space-x-2"):
+          tdiv(class = "i-mdi-file-outline shrink-0")
+          span: text pkg.doc.noProtocol
 
 proc getTimeSinceCommit(pkg: NimPackage): kstring =
   if pkg.lastCommitTime == fromUnix(0): "unknown".jss
@@ -73,7 +74,7 @@ proc renderPkgInfo(pkg: NimPackage): VNode =
         text pkg.getTimeSinceCommit
       tdiv:
         tdiv: text "usage:"
-        tdiv(class = "bg-ctp-surfacezero rounded my-2 mx-3 p-2 w-auto"):
+        tdiv(class = "bg-ctp-surfacezero rounded my-2 mx-3 p-2 w-auto overflow-auto"):
           pre:
             text "nimble install " & pkg.name
           pre:

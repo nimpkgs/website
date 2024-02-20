@@ -43,6 +43,29 @@ export default defineConfig({
       color: ${catppuccinColors.mauve};
       cursor: pointer;
     }
+
+    /* width */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: ${catppuccinColors.crust};
+        border-radius: 5px;
+    }
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: ${catppuccinColors.mantle};
+        border: 1px solid transparent;
+        border-color: ${catppuccinColors.rosewater};
+        border-radius: 5px;
+    }
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: ${catppuccinColors.roswater};
+    }
+
+
     /* loading animation */
     .lds-dual-ring {
       display: inline-block;
