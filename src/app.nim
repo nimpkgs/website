@@ -1,17 +1,20 @@
 import std/strutils
 import karax/[karax, karaxdsl, vdom]
-
 import components/[header, button, footer]
 import pages/pages
-import context
-import jsconsole
+import context, utils
 
 proc render(data: RouterData): VNode =
   console.log ctx
-  result = buildHtml(tdiv(class = "lg:w-3/4 max-w-[90%] mx-auto md:text-lg text-sm min-h-screen flex flex-col")):
+  var uri = currentUri()
+  result = buildHtml(tdiv(
+      class = "lg:w-3/4 max-w-[90%] mx-auto md:text-lg text-sm min-h-screen flex flex-col")
+    ):
     headerBar()
     tdiv(class = "mb-5"):
-      if not ctx.loaded:
+      if uri.path != "/" and not uri.path.startsWith("#"):
+        notfound.render()
+      elif not ctx.loaded:
         tdiv(class = "flex h-50"):
           tdiv(class = "mx-auto my-auto lds-dual-ring")
       else:

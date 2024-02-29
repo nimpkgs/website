@@ -14,13 +14,15 @@ proc noProtocol*(s: kstring): kstring =
     .replace("https://", "")
     .jss
 
+proc currentUri*(): Uri {.inline.} =
+  parseUri($window.location.href)
 
 func replace*(c: kstring, sub: string, by = " "): kstring =
   ($c).replace(sub, by).jss
 
 proc setSearchUrl*(searchQuery: kstring): proc() =
   proc() =
-    var url = parseUri($window.location.href)
+    var url = currentUri()
     url.anchor = "/search"
     url = url ? {"query": $searchQuery}
     window.history.pushState(js{}, "".jss, url.jss)

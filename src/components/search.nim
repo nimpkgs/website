@@ -50,8 +50,7 @@ proc searchPackages*(q: Query): seq[NimPackage] =
       result.add pkg
 
 proc getSearchFromUri*(): kstring =
-  var url = initUri()
-  parseUri($window.location.href, url)
+  var url = currentUri()
   if url.query == "": return ""
   for k, v in decodeQuery(url.query):
     if k == "query":
