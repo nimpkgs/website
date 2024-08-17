@@ -38,7 +38,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - uses: jiro4989/setup-nim-action@v1
+      - uses: jiro4989/setup-nim-action@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -47,8 +47,8 @@ jobs:
 
       - name: Build Website
         run: |
-          nimble install -Y 'https://github.com/nim-lang/atlas.git@#f7ade65f'
-          nim setup
+          nimble setup -l
+          nimble install -d -Y
           nim build
 
       - name: Upload artifact

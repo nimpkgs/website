@@ -1,9 +1,5 @@
 switch("backend","js")
 
-task setup, "run atlas init":
-  exec "atlas init --deps=.workspace"
-  exec "atlas install"
-
 task build, "build":
   selfExec "js -o:site/app.js -d:release src/app.nim"
   exec "pnpm run build"
