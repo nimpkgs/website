@@ -1,6 +1,6 @@
-import std/[strutils, sequtils, dom, uri]
+import std/[strutils, sequtils, uri]
 
-import karax/[kbase, karax, karaxdsl, vdom, jstrutils, kdom]
+import karax/[kbase, karax, karaxdsl, vdom, jstrutils]
 
 import ../[packages, style, context]
 # import ../components/package
@@ -33,6 +33,11 @@ proc parseQuery*(s: kstring): Query =
     else:
       result.all &= part
 
+proc toLowerAscii(ks: kstring): kstring {.inline.} =
+  ($ks).toLowerAscii().kstring
+
+proc genericSearchString(p: NimPackage): kstring =
+  (@[p.url, p.name, p.description, p.tags.join(" ").kstring].join(" ").kstring).toLowerAscii()
 
 proc searchPackages*(q: Query): seq[NimPackage] =
   if q == Query():
@@ -40,11 +45,10 @@ proc searchPackages*(q: Query): seq[NimPackage] =
     return
 
   for name, pkg in ctx.nimpkgs.packages:
-    let searchStr = ((pkg.url & " " & pkg.name & " " & pkg.description & " " & (
-        pkg.tags).join(" ").kstring))
-    if (q.name notin pkg.name) or
-    (q.license notin pkg.license) or
-    (q.tag != "".kstring and (q.tag notin pkg.tags)): continue
+    let searchStr = pkg.genericSearchString()
+    if (q.name notin pkg.name) or (q.license notin pkg.license) or
+        (q.tag != "".kstring and (q.tag notin pkg.tags)):
+      continue
 
     if q.all in searchStr:
       result.add pkg
