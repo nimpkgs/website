@@ -15,3 +15,8 @@ task watch, "rebuild on change":
         "nim js -d:packagesHash:master -o:site/app.js src/app.nim"
       )
 
+# begin Nimble config (version 2)
+--noNimblePath
+when withDir(thisDir(), system.fileExists("nimble.paths")):
+  include "nimble.paths"
+# end Nimble config

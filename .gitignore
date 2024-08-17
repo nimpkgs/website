@@ -140,3 +140,6 @@ src/*.js
 
 # for debugging
 site/nimpkgs.json
+# nimble.develop
+nimble.paths
+nimbledeps
