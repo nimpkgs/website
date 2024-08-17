@@ -4,9 +4,9 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
   };
 
-  outputs = inputs @ {
-    self,
+  outputs = {
     nixpkgs,
+    ...
   }: let
     inherit (nixpkgs.lib) genAttrs;
     supportedSystems = ["x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin"];
@@ -16,7 +16,7 @@
       default = pkgs.mkShell {
         buildInputs = with pkgs; [
           nim
-          nim-atlas
+          nimble
           watchexec
           nodePackages.pnpm
         ];
