@@ -90,7 +90,7 @@ proc filteredPackagesDom(): VNode =
             pkg.card
 
 proc update(pgCtx: var PageContext) =
-  pgCtx.filteredPackages = ctx.nimpkgs.packages.values().toSeq()
+  pgCtx.filteredPackages = nimpkgsList() 
   pgCtx.search = getSearchFromUri()
   pgCtx.filteredPackages = searchPackages(parseQuery(pgCtx.search))
 

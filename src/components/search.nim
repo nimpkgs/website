@@ -1,4 +1,4 @@
-import std/[strutils, sequtils, uri]
+import std/[strutils, uri]
 
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils]
 
@@ -23,35 +23,36 @@ proc parseQuery*(s: kstring): Query =
         k = subparts[0]
         v = subparts[1]
       case k:
-        of "name":
-          result.name = v
-        of "tag":
-          result.tag = v.replace("-")
-        of "license":
-          result.license = v
-        else: discard
+      of "name":
+        result.name = v
+      of "tag":
+        result.tag = v.replace("-")
+      of "license":
+        result.license = v
+      else: discard
     else:
       result.all &= part
 
-proc toLowerAscii(ks: kstring): kstring {.inline.} =
-  ($ks).toLowerAscii().kstring
+proc toLowerAscii(ks: kstring): kstring {.inline.} = ($ks).toLowerAscii().kstring
 
 proc genericSearchString(p: NimPackage): kstring =
   (@[p.url, p.name, p.description, p.tags.join(" ").kstring].join(" ").kstring).toLowerAscii()
 
-proc searchPackages*(q: Query): seq[NimPackage] =
-  if q == Query():
-    result = ctx.nimpkgs.packages.values.toSeq()
+proc `~=`(q: Query, pkg: NimPackage): bool = 
+  let searchStr = pkg.genericSearchString()
+  if (q.name notin pkg.name) or (q.license notin pkg.license) or
+      (q.tag != "".kstring and (q.tag notin pkg.tags)):
     return
 
-  for name, pkg in ctx.nimpkgs.packages:
-    let searchStr = pkg.genericSearchString()
-    if (q.name notin pkg.name) or (q.license notin pkg.license) or
-        (q.tag != "".kstring and (q.tag notin pkg.tags)):
-      continue
+  if q.all.toLowerAscii() in searchStr:
+    return true
 
-    if q.all in searchStr:
-      result.add pkg
+proc searchPackages*(q: Query): seq[NimPackage] =
+  if q == Query(): return nimpkgsList()
+
+  collect:
+    for _, pkg in ctx.nimpkgs.packages:
+      if q ~= pkg: pkg
 
 proc getSearchFromUri*(): kstring =
   var url = currentUri()

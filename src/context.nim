@@ -1,5 +1,5 @@
 import std/[
-  asyncjs, jsconsole, jsfetch, sugar, tables
+  asyncjs, jsconsole, jsfetch, sequtils, sugar, tables
 ]
 
 import karax/[kbase, karax]
@@ -13,6 +13,8 @@ type
   Context* = object
     nimpkgs*: NimPkgs
     loaded*: bool
+
+var ctx* = Context()
 
 let nimpkgsUrl =
   when defined(debug): "http://localhost:8080/nimpkgs.json"
@@ -29,5 +31,8 @@ proc fetchPackages*(ctx: var Context){.async.} =
     )
     .catch((err: Error) => console.log err
   )
-var ctx* = Context()
+
 discard ctx.fetchPackages
+
+proc nimpkgsList*(): seq[NimPackage] {.inline.} = 
+  ctx.nimpkgs.packages.values.toSeq()
