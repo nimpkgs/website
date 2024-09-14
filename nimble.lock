@@ -1,16 +1,6 @@
 {
   "version": 2,
   "packages": {
-    "dotenv": {
-      "version": "2.0.2",
-      "vcsRevision": "a3c6726147276ea1447dee292fd27bb036242b78",
-      "url": "https://github.com/euantorano/dotenv.nim",
-      "downloadMethod": "git",
-      "dependencies": [],
-      "checksums": {
-        "sha1": "1e70fc63c286ca3da7592d61dbe501fcea35bc72"
-      }
-    },
     "jsony": {
       "version": "1.1.5",
       "vcsRevision": "ea811bec7fa50f5abd3088ba94cda74285e93f18",
@@ -21,27 +11,14 @@
         "sha1": "6aeb83e7481ca8686396a568096054bc668294df"
       }
     },
-    "ws": {
-      "version": "0.5.0",
-      "vcsRevision": "9536bf99ddf5948db221ccb7bb3663aa238a8e21",
-      "url": "https://github.com/treeform/ws",
+    "karax": {
+      "version": "1.3.3",
+      "vcsRevision": "b125b6f23e56e9d88068758aa56635a721782009",
+      "url": "https://github.com/daylinmorgan/karax",
       "downloadMethod": "git",
       "dependencies": [],
       "checksums": {
-        "sha1": "ae4daf4ae302d0431f3c2d385ae9d2fe767a3246"
-      }
-    },
-    "karax": {
-      "version": "1.3.3",
-      "vcsRevision": "d86349c63d8ece330d749eb037a9fa5ffca87c79",
-      "url": "https://github.com/karaxnim/karax/",
-      "downloadMethod": "git",
-      "dependencies": [
-        "ws",
-        "dotenv"
-      ],
-      "checksums": {
-        "sha1": "6683189b4456437c2809be72e3404adde77f5c34"
+        "sha1": "4c2cd8c8c6642919a81be12d7535323e7073f47e"
       }
     }
   },
