@@ -11,15 +11,12 @@ proc render*(): VNode =
         tdiv(class = "flex flex-col md:flex-row grow"):
           searchBar()
       tdiv():
-        tdiv():
-          text "explore tags:"
+        tdiv(): text "explore tags:"
         randomTags()
       tdiv():
-        tdiv():
-          text "recently added packages"
+        tdiv(): text "recently added packages:"
         recentAddedPackagesList()
       tdiv():
-        tdiv():
-          text "recently released versions:"
+        tdiv(): text "recently released versions:"
         recentPackageVersionsList()
 
