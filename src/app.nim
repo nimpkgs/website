@@ -5,7 +5,7 @@ import pages/pages
 import context, utils
 
 proc render(data: RouterData): VNode =
-  console.log ctx
+  when defined(debug): console.log ctx
   var uri = currentUri()
   result = buildHtml(tdiv(
       class = "lg:w-3/4 max-w-[90%] mx-auto md:text-lg text-sm min-h-screen flex flex-col")

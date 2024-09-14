@@ -36,7 +36,7 @@ proc selectRandomTags*(ctx: Context): seq[kstring] =
     if tag notin result:
       result.add tag
 
-proc randomTags*(ctx: Context): VNode =
+proc randomTags*(): VNode =
   let tags = ctx.selectRandomTags()
   buildHtml(tdiv):
     tags.renderTags

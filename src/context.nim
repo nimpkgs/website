@@ -1,10 +1,7 @@
 import std/[
   asyncjs, jsconsole, jsfetch, sequtils, sugar, tables
 ]
-
-import karax/[kbase, karax]
-import jsony
-
+import karax/[kbase, karax], jsony
 import packages, utils
 
 export tables
@@ -36,3 +33,17 @@ discard ctx.fetchPackages
 
 proc nimpkgsList*(): seq[NimPackage] {.inline.} = 
   ctx.nimpkgs.packages.values.toSeq()
+
+proc recentPackagesList*(): seq[NimPackage] {.inline.} =
+  ctx.nimpkgs.recent.mapIt(ctx.nimpkgs.packages[$it])
+
+proc getRecentReleases*(): seq[NimPackage] =
+  var pkgs: seq[NimPackage]
+  for pkg in ctx.nimpkgs.packages.values():
+    if pkg.versions.len > 0:
+      pkgs.add pkg
+
+  pkgs.sort(sortVersion, order = Descending)
+  return pkgs[0..10]
+
+

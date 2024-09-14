@@ -1,7 +1,6 @@
 import karax/[karaxdsl, vdom]
 
 import ../components/[search, tag, package]
-import ../context
 
 proc render*(): VNode =
   result = buildHtml(tdiv(class = "justify-center")):
@@ -14,9 +13,13 @@ proc render*(): VNode =
       tdiv():
         tdiv():
           text "explore tags:"
-        ctx.randomTags()
+        randomTags()
+      tdiv():
+        tdiv():
+          text "recently added packages"
+        recentAddedPackagesList()
       tdiv():
         tdiv():
           text "recently released versions:"
-        ctx.recentPackageVersionList
+        recentPackageVersionsList()
 

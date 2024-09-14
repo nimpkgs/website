@@ -1,4 +1,4 @@
-import std/[algorithm, strutils, sequtils, jsconsole, uri, random]
+import std/[strutils, sequtils, uri, random]
 
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils, ]
 
@@ -7,6 +7,7 @@ import ../components/tag
 import ../utils
 
 randomize()
+
 proc authorRepo(uri: Uri, hostname = false): kstring =
   var name =
     if hostname: uri.hostname & uri.path.replace(".git")
@@ -58,29 +59,27 @@ proc card*(pkg: NimPackage): VNode =
                 class = "link"):
               t.renderTag
 
-proc getRecentReleases(ctx: Context): seq[NimPackage] =
-  var pkgs: seq[NimPackage]
-  for pkg in ctx.nimpkgs.packages.values():
-    if pkg.versions.len > 0:
-      pkgs.add pkg
-
-  pkgs.sort(sortVersion, order = Descending)
-  return pkgs[0..20]
-
-proc recentPackageVersionList*(ctx: Context): VNode =
-  let pkgs = ctx.getRecentReleases
+proc recentAddedPackagesList*(): VNode =
+  let pkgs = recentPackagesList()
   result = buildHtml(tdiv(class = "flex flex-wrap")):
     for pkg in pkgs:
-      a(class = borderStyle & "p-2 m-1 space-x-1 no-underline text-ctp-text",
+      a(class = borderStyle & "group p-2 m-1 space-x-1 no-underline text-ctp-text)",
           href = "/#/pkg/" & pkg.name):
-        span(class = textStyle & "font-bold font-mono-casual"): text pkg.name
-        span(class = "italic"): text pkg.versions[0].tag
-        span:
-          text " (" & (getTime() - pkg.versions[0].time).inDays.jss & " days ago)"
+        span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text pkg.name
+
+proc recentPackageVersionsList*(): VNode =
+  let pkgs = getRecentReleases()
+  result = buildHtml(tdiv(class = "flex flex-wrap")):
+    for pkg in pkgs:
+      a(class = borderStyle & "group p-2 m-1 space-x-1 no-underline text-ctp-text)",
+          href = "/#/pkg/" & pkg.name):
+        span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text pkg.name
+        span(class = "group-hover:text-ctp-mauve"): text pkg.versions[0].tag
+        # span:
+        #   text " (" & (getTime() - pkg.versions[0].time).inDays.jss & " days ago)"
 
 proc randomPackage*(ctx: Context): VNode =
   let pkgName = ctx.nimpkgs.packages.keys().toSeq().sample()
-  console.log pkgName.jss
   result = buildHtml(tdiv(class = borderStyle & "my-2 m-1 p-2")):
     a(href = "/#/pkg/" & pkgName.jss, class = "flex items-center text-ctp-text no-underline"):
       tdiv(class = "i-mdi-dice-6")

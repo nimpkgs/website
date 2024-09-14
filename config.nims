@@ -8,7 +8,7 @@ task watch, "rebuild on change":
   exec (
         "watchexec " &
         "--project-origin . -w src " &
-        "nim js -d:packagesHash:master -o:site/app.js src/app.nim"
+        "nim js -d:debug -d:packagesHash:master -o:site/app.js src/app.nim"
       )
 
 # begin Nimble config (version 2)

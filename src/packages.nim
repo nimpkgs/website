@@ -29,6 +29,7 @@ type
 
   NimPkgs* = object
     updated*: Time
+    recent*: seq[kstring]
     packagesHash*: kstring
     packages*: OrderedTable[string, NimPackage]
 
