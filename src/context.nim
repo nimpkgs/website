@@ -7,7 +7,7 @@ import packages, utils
 export tables
 
 type
-  Context* = object
+  Context* = ref object
     nimpkgs*: NimPkgs
     loaded*: bool
 
@@ -18,7 +18,7 @@ let nimpkgsUrl =
   else: "https://raw.githubusercontent.com/nimpkgs/nimpkgs/main/nimpkgs.json"
 
 
-proc fetchPackages*(ctx: var Context){.async.} =
+proc fetchPackages*(ctx: Context){.async.} =
   await fetch(nimpkgsUrl.jss)
     .then((r: Response) => r.text())
     .then(proc(txt: kstring) =
