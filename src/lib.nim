@@ -20,11 +20,21 @@ proc currentUri*(): Uri {.inline.} =
 func replace*(c: kstring, sub: string, by = " "): kstring =
   ($c).replace(sub, by).jss
 
-proc setSearchUrl*(searchQuery: kstring): proc() =
+type
+  SortMethod* = enum
+    smAlphabetical = "smAlphabetical", smCommitAge = "commit", smVersionAge = "version"
+
+proc setSearchUrl*(searchQuery: kstring, sortMethod = smAlphabetical): proc() =
   proc() =
-    var url = currentUri()
+    var 
+      url = currentUri()
+      params: seq[(string, string)]
+    if searchQuery != "":
+      params.add ("query", $searchQuery)
+    if sortMethod != smAlphabetical:
+      params.add ("sort", $sortMethod)
     url.anchor = "/search"
-    url = url ? {"query": $searchQuery}
+    url = url ? params
     window.history.pushState(js{}, "".jss, url.jss)
     let d = getVNodeById("search")
     let node = d.dom

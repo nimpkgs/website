@@ -5,7 +5,7 @@ import std/[
 import karax/[kbase]
 import jsony
 
-import ./utils
+import ./lib
 export algorithm, tables, times, asyncjs, sugar
 
 proc parseHook*(s: string, i: var int, v: var kstring) =

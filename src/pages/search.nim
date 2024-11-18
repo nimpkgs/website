@@ -1,14 +1,15 @@
-import std/[algorithm, strutils, sequtils, dom]
+import std/[algorithm, strutils, sequtils, dom, uri]
 
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils, kdom]
 
 import ../[packages, context]
 import ../components/[package, search]
-import ../utils
+import ../lib
 
 type
-  SortMethod = enum
-    smAlphabetical, smCommitAge, smVersionAge
+  # SortMethod = enum
+    # smAlphabetical, smCommitAge, smVersionAge
+    #
   PageContext = object
     sortMethod: SortMethod = smAlphabetical
     filteredPackages: seq[NimPackage]
@@ -52,15 +53,15 @@ proc alphabeticalPackageList(pkgs: seq[NimPackage]): VNode =
       for pkg in packages:
         pkg.card
 
-proc selectSortMethod() =
-  let v = getVNodeById("sort-select").getInputText
-  pgCtx.sortMethod = SortMethod(parseInt(v))
-
 proc sortSelector(): VNode =
   buildHtml(tdiv(class = "flex items-center")):
     label(`for` = "sort-select"): text "sort:"
-    select(class = "bg-ctp-crust rounded p-3", name = "sort",
-        `id` = "sort-select", onChange = selectSortMethod):
+    select(
+      class = "bg-ctp-crust rounded p-3",
+      name = "sort",
+      `id` = "sort-select",
+      onChange = getSearchInput
+    ):
       for i, msg in ["alphabetical", "recent commit", "recent version"]:
         if i == ord(pgCtx.sortMethod):
           option(value = ($i).cstring, selected = ""): text msg
@@ -89,8 +90,22 @@ proc filteredPackagesDom(): VNode =
           for pkg in pgCtx.filteredPackages:
             pkg.card
 
+# TODO: combine with 'getSearchFromUri'
+proc getSortMethodFromUri*(): SortMethod =
+  result = smAlphabetical
+  var url = currentUri()
+  for k, v in decodeQuery(url.query):
+    if k == "sort":
+      case v
+      of "commit":
+        result = smCommitAge
+      of "version":
+        result = smVersionAge
+      else: discard
+
 proc update(pgCtx: var PageContext) =
-  pgCtx.filteredPackages = nimpkgsList() 
+  pgCtx.filteredPackages = nimpkgsList()
+  pgCtx.sortMethod = getSortMethodFromUri()
   pgCtx.search = getSearchFromUri()
   pgCtx.filteredPackages = searchPackages(parseQuery(pgCtx.search))
 

@@ -3,7 +3,7 @@ import karax/[kbase, karax, karaxdsl, kdom, vdom, jstrutils, ]
 
 import ../[context, packages, style]
 import ../components/[tag, package]
-import ../utils
+import ../lib
 import notfound
 
 proc openLink(link: kstring): proc() =

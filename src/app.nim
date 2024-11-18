@@ -2,7 +2,7 @@ import std/strutils
 import karax/[karax, karaxdsl, vdom]
 import components/[header, button, footer]
 import pages/pages
-import context, utils
+import context, lib
 
 proc render(data: RouterData): VNode =
   when defined(debug): console.log ctx

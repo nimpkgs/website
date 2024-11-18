@@ -1,7 +1,7 @@
 import std/[uri, tables, random]
 import karax/[kbase, karaxdsl, vdom, jstrutils]
 
-import ../[packages, style, context, utils]
+import ../[packages, style, context, lib]
 
 randomize()
 

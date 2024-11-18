@@ -4,7 +4,7 @@ import karax/[kbase, karax, karaxdsl, vdom, jstrutils, ]
 
 import ../[packages, style, context]
 import ../components/tag
-import ../utils
+import ../lib
 
 randomize()
 

@@ -3,8 +3,7 @@ import std/[strutils, uri]
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils]
 
 import ../[packages, style, context]
-# import ../components/package
-import ../utils
+import ../lib
 
 type
   Query* = object
@@ -55,15 +54,21 @@ proc searchPackages*(q: Query): seq[NimPackage] =
       if q ~= pkg: pkg
 
 proc getSearchFromUri*(): kstring =
+  result = ""
   var url = currentUri()
-  if url.query == "": return ""
+  if url.query == "": return
   for k, v in decodeQuery(url.query):
     if k == "query":
       return v.kstring
 
 proc getSearchInput*() =
   let searchInput = getVNodeById("search").getInputText
-  setSearchUrl(searchInput)()
+  let sortNode = getVNodeById("sort-select")
+  let sortMethod = SortMethod(
+      if sortNode != nil: parseInt(sortNode.getInputText)
+      else: 0
+    )
+  setSearchUrl(searchInput, sortMethod)()
 
 proc searchBar*(value = jss""): Vnode =
   buildHtml(tdiv(class = "flex flex-row my-2 grow")):
