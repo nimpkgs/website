@@ -42,7 +42,11 @@ proc card*(pkg: NimPackage): VNode =
         h2(class = (textStyle & "font-black md:text-2xl text-lg font-casual").kstring):
           text pkg.name
       if not pkg.isAlias:
-        pkg.projectUrl
+        tdiv(class="flex flex-col md:items-end items-start"):
+          pkg.projectUrl
+          if not pkg.deleted:
+            span(class="md:text-sm text-xs text-nowrap text-ctp-subtextzero"):
+              text "last commit: " & pkg.lastCommitTime.format("MMM d, YYYY")
     if pkg.isAlias:
       tdiv:
         text "alias for: "
@@ -50,14 +54,13 @@ proc card*(pkg: NimPackage): VNode =
             class = "link"):
           text pkg.alias
     else:
-      span(class = "md:text-xl my-2"): text pkg.description
-      tdiv(class = "flex flex-col text-xs md:text-lg overflow-x-auto"):
-        tdiv(class = "flex flex-wrap"):
-          for t in pkg.tags:
-            tdiv(
-              onClick = setSearchUrl("tag:" & t.replace(" ", "-")),
-                class = "link"):
-              t.renderTag
+      span(class = "md:text-xl my-2 "): text pkg.description
+      tdiv(class = "flex flex-wrap text-xs md:text-md overflow-x-auto"):
+        for t in pkg.tags:
+          tdiv(
+            onClick = setSearchUrl("tag:" & t.replace(" ", "-")),
+              class = "link"):
+            t.renderTag
 
 proc recentAddedPackagesList*(): VNode =
   let pkgs = recentPackagesList()
