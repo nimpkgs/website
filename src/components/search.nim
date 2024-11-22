@@ -61,15 +61,6 @@ proc getSearchFromUri*(): kstring =
     if k == "query":
       return v.kstring
 
-proc getSearchInput*() =
-  let searchInput = getVNodeById("search").getInputText
-  let sortNode = getVNodeById("sort-select")
-  let sortMethod = SortMethod(
-      if sortNode != nil: parseInt(sortNode.getInputText)
-      else: 0
-    )
-  setSearchUrl(searchInput, sortMethod)()
-
 proc searchBar*(value = jss""): Vnode =
   buildHtml(tdiv(class = "flex flex-row my-2 grow")):
     input(`type` = "text", class = "bg-ctp-crust md:mx-3 mx-1 p-2 grow".kstring & borderStyle, `id` = "search",

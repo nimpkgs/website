@@ -24,7 +24,7 @@ proc scrollToAnchor(a: string): proc() =
 
 proc letterlink(activeLinks: seq[char]): VNode = buildHtml:
   tdiv(
-    class = "flex flex-wrap md:text-xl text-lg capitalize w-full justify-evenly gap-x-2 md:gap-x-auto"
+      class = "flex flex-wrap md:text-xl text-lg capitalize w-full justify-evenly gap-x-2 md:gap-x-auto"
     ):
     for l in LowercaseLetters:
       tdiv(class = "w-5"):

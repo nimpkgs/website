@@ -41,3 +41,24 @@ proc setSearchUrl*(searchQuery: kstring, sortMethod = smAlphabetical): proc() =
     scrollIntoView(node)
     redraw()
 
+proc getSearchInput*() =
+  let searchInput = getVNodeById("search").getInputText
+  let sortNode = getVNodeById("sort-select")
+  let sortMethod = SortMethod(
+      if sortNode != nil: parseInt($sortNode.getInputText)
+      else: 0
+    )
+  setSearchUrl(searchInput, sortMethod)()
+
+
+proc setSearchInput*(q: kstring): proc() =
+  result = proc() =
+    let sortNode = getVNodeById("sort-select")
+    let sortMethod = SortMethod(
+        if sortNode != nil: parseInt($sortNode.getInputText)
+        else: 0
+      )
+    setSearchUrl(q, sortMethod)()
+
+
+

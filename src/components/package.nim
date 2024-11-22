@@ -3,7 +3,7 @@ import std/[strutils, sequtils, uri, random]
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils, ]
 
 import ../[packages, style, context]
-import ../components/tag
+import ../components/[tag, search]
 import ../lib
 
 randomize()
@@ -50,7 +50,7 @@ proc card*(pkg: NimPackage): VNode =
     if pkg.isAlias:
       tdiv:
         text "alias for: "
-        span(onClick = setSearchUrl("name:" & pkg.alias),
+        span(onClick = setSearchInput("name:" & pkg.alias),
             class = "link"):
           text pkg.alias
     else:
@@ -58,7 +58,7 @@ proc card*(pkg: NimPackage): VNode =
       tdiv(class = "flex flex-wrap text-xs md:text-md overflow-x-auto"):
         for t in pkg.tags:
           tdiv(
-            onClick = setSearchUrl("tag:" & t.replace(" ", "-")),
+            onClick = setSearchInput("tag:" & t.replace(" ", "-")),
               class = "link"):
             t.renderTag
 
@@ -78,8 +78,6 @@ proc recentPackageVersionsList*(): VNode =
           href = "/#/pkg/" & pkg.name):
         span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text pkg.name
         span(class = "group-hover:text-ctp-mauve"): text pkg.versions[0].tag
-        # span:
-        #   text " (" & (getTime() - pkg.versions[0].time).inDays.jss & " days ago)"
 
 proc randomPackage*(ctx: Context): VNode =
   let pkgName = ctx.nimpkgs.packages.keys().toSeq().sample()
