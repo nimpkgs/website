@@ -13,12 +13,12 @@
     },
     "karax": {
       "version": "1.3.3",
-      "vcsRevision": "d3febfc15daa4771e9e53d5ba8a87531dd259ed0",
+      "vcsRevision": "3033d83302753993e7dd8517be0a4d630fb1cd4d",
       "url": "https://github.com/daylinmorgan/karax",
       "downloadMethod": "git",
       "dependencies": [],
       "checksums": {
-        "sha1": "8abc752c46a5e8a5086ad9fc548d28a3065579dd"
+        "sha1": "7180293d2b39f17827ae84d395c9e65f45565107"
       }
     }
   },
