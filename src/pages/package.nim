@@ -6,9 +6,8 @@ import ../components/[tag, package]
 import ../lib
 import notfound
 
-proc openLink(link: kstring): proc() =
-  result = proc() =
-    discard open(window, link, "_self")
+proc openLink(link: kstring) {.kcall.} =
+  discard open(window, link, "_self")
 
 proc versionTable(pkg: NimPackage): VNode =
   var versions = pkg.versions

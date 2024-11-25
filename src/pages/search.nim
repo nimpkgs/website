@@ -17,10 +17,9 @@ type
 
 var pgCtx = PageContext()
 
-proc scrollToAnchor(a: string): proc() =
-  result = proc() =
-    let d = getVNodeById(a)
-    scrollIntoView(d.dom)
+proc scrollToAnchor(a: string){.kcall.} =
+  let d = getVNodeById(a)
+  scrollIntoView(d.dom)
 
 proc letterlink(activeLinks: seq[char]): VNode = buildHtml:
   tdiv(
