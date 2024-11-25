@@ -1,7 +1,5 @@
 import std/[strutils, uri]
-
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils]
-
 import ../[packages, style, context]
 import ../lib
 
@@ -25,22 +23,33 @@ proc parseQuery*(s: kstring): Query =
       of "name":
         result.name = v
       of "tag":
-        result.tag = v.replace("-")
+        result.tag = v
       of "license":
         result.license = v
       else: discard
     else:
       result.all &= part
 
-proc toLowerAscii(ks: kstring): kstring {.inline.} = ($ks).toLowerAscii().kstring
-
 proc genericSearchString(p: NimPackage): kstring =
-  (@[p.url, p.name, p.description, p.tags.join(" ").kstring].join(" ").kstring).toLowerAscii()
+  (@[p.url, p.name, p.description, p.tags.join(" ").kstring].join(" ")).toLowerAscii().kstring
 
-proc `~=`(q: Query, pkg: NimPackage): bool = 
+func norm(s: kstring): string =
+  ($s).replace("-").replace(" ").normalize()
+
+func `!->`(a, b: kstring): bool = 
+  norm(a) notin norm(b)
+
+proc `!->`(a: kstring, bs: seq[kstring]): bool =
+  let normA = norm(a)
+  for b in bs:
+    if normA in norm(b):
+      return false
+  result = true
+
+proc `~=`(q: Query, pkg: NimPackage): bool =
   let searchStr = pkg.genericSearchString()
-  if (q.name notin pkg.name) or (q.license notin pkg.license) or
-      (q.tag != "".kstring and (q.tag notin pkg.tags)):
+  if (q.name !-> pkg.name) or (q.license !-> pkg.license) or
+      (q.tag != "".kstring and (q.tag !-> pkg.tags)):
     return
 
   if q.all.toLowerAscii() in searchStr:
@@ -63,11 +72,19 @@ proc getSearchFromUri*(): kstring =
 
 proc searchBar*(value = jss""): Vnode =
   buildHtml(tdiv(class = "flex flex-row my-2 grow")):
-    input(`type` = "text", class = "bg-ctp-crust md:mx-3 mx-1 p-2 grow".kstring & borderStyle, `id` = "search",
-          placeholder = "query", value = value,
-          onChange = getSearchInput)
-    button(`type` = "button", class = borderStyle & "p-2 flex items-center",
-        onClick = getSearchInput):
+    input(
+      `type` = "text",
+      class = "bg-ctp-crust md:mx-3 mx-1 p-2 grow".kstring & borderStyle,
+      `id` = "search",
+      placeholder = "query",
+      value = value,
+      onChange = getSearchInput
+    )
+    button(
+      # `type` = "button",
+      class = borderStyle & "p-2 flex items-center",
+      onClick = getSearchInput
+    ):
       tdiv(class = "i-mdi-magnify")
       text "search"
 

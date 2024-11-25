@@ -20,6 +20,8 @@ proc currentUri*(): Uri {.inline.} =
 func replace*(c: kstring, sub: string, by = " "): kstring =
   ($c).replace(sub, by).jss
 
+func toLowerAscii*(ks: kstring): kstring {.inline.} = ($ks).toLowerAscii().kstring
+
 macro kcall*(p: typed) =
   ## make procedure return another procedure that takes no arguments
   ##
