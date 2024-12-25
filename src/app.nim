@@ -22,6 +22,7 @@ proc render(data: RouterData): VNode =
           of "#/index", "": index.render()
           of "#/search": search.render()
           of "#/metrics": metrics.render()
+          of "#/about": about.render()
           else:
             if ($data.hashPart).startswith("#/pkg/"):
               package.render(($data.hashPart).replace("#/pkg/", ""))

@@ -1,2 +1,2 @@
-import index, search, package, notfound, metrics
-export index, search, package, notfound, metrics
+import index, search, package, notfound, metrics, about
+export index, search, package, notfound, metrics, about

@@ -21,5 +21,6 @@ const colors = [
 let
   accent* = (colors.sample() & " ").kstring
   textStyle* = (" text-ctp-" & accent & " ").kstring
+  headerStyle* = (textStyle & "text-3xl md:text-6xl font-bold font-mono-casual my-2").kstring
   borderStyle* = (" border rounded b-ctp-" & accent & " ").kstring
 
