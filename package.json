@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "concurrently npm:server npm:uno:dev npm:watch",
-    "server": "http-server ./site",
+    "server": "http-server ./site --cors",
     "watch": "nim watch",
     "build": "pnpm run uno:prd && pnpm run minify",
     "minify": "esbuild --minify --outdir=site --allow-overwrite site/app.js site/uno.css",
