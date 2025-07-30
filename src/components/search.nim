@@ -39,19 +39,18 @@ func norm(s: kstring): string =
 func `!->`(a, b: kstring): bool = 
   norm(a) notin norm(b)
 
-proc `!->`(a: kstring, bs: seq[kstring]): bool =
-  let normA = norm(a)
-  for b in bs:
-    if normA in norm(b):
+proc hasTag(pkg: NimPackage, tag: string): bool =
+  if tag == "": return false
+  let normTag = norm(tag)
+  for t in pkg.tags:
+    if normTag == norm(t):
       return false
-  result = true
+  return true
 
 proc `~=`(q: Query, pkg: NimPackage): bool =
   let searchStr = pkg.genericSearchString()
-  if (q.name !-> pkg.name) or (q.license !-> pkg.license) or
-      (q.tag != "".kstring and (q.tag !-> pkg.tags)):
+  if (q.name !-> pkg.name) or (q.license !-> pkg.license) or pkg.hasTag($q.tag):
     return
-
   if q.all.toLowerAscii() in searchStr:
     return true
 
