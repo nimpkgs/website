@@ -34,7 +34,7 @@ proc render*(): VNode =
     h2(class = headerStyle):
       text "About"
     tdiv(class = "mt-10"):
-      text "Nimpkgs is a web interface to search for modules added to the offical "
+      text "Nimpkgs is a web interface to search for modules added to the official "
       a(href = "https://github.com/nim-lang/packages"):
         text "nim-lang/packages"
       text"."
