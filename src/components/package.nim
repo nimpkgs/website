@@ -2,9 +2,8 @@ import std/[strutils, sequtils, uri, random]
 
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils, ]
 
-import ../[packages, style, context]
-import ../components/[tag, search]
-import ../lib
+import ../[packages, style, context, lib]
+import ../components/[tag]
 
 randomize()
 

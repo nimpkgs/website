@@ -1,10 +1,9 @@
 import std/[algorithm, strutils, sequtils, dom, uri]
 
-import karax/[kbase, karax, karaxdsl, vdom, jstrutils, kdom]
+import karax/[kbase, karax, karaxdsl, vdom, kdom]
 
-import ../[packages, context]
+import ../[packages, context, lib]
 import ../components/[package, search]
-import ../lib
 
 type
   # SortMethod = enum
