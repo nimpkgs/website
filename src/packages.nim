@@ -18,6 +18,14 @@ type
     tag*, hash*: kstring
     time*: Time
 
+  NimPackageStatus* = enum # order matters here since ranges are used
+    Unknown,
+    OutOfDate,
+    UpToDate,
+    Alias,
+    Unreachable,
+    Deleted
+
   NimPackage* = object
     name*, url*, `method`*, description*,
       license*, web*, doc*, alias*: kstring
@@ -25,7 +33,16 @@ type
     lastCommitTime*: Time
     versions*: seq[Version]
     tags*: seq[kstring]
-    deleted*: bool
+    status*: NimPackageStatus
+
+  # NimPackage* = object
+  #   name*, url*, `method`*, description*,
+  #     license*, web*, doc*, alias*: kstring
+  #   lastCommitHash*: kstring
+  #   lastCommitTime*: Time
+  #   versions*: seq[Version]
+  #   tags*: seq[kstring]
+  #   deleted*: bool
 
   NimPkgs* = object
     updated*: Time
@@ -43,6 +60,7 @@ proc newHook*(p: var NimPackage) =
   p.description = ""
   p.alias = ""
   p.tags = @[]
+  p.status = Unknown
 
 proc newHook*(nimpkgs: var NimPkgs) =
   nimpkgs.packagesHash = ""
@@ -68,7 +86,6 @@ proc sortVersion*(a, b: NimPackage): int =
     result = -1
   else:
     result = 1
-
 
 proc isAlias*(p: NimPackage): bool {.inline.} = p.alias != ""
 

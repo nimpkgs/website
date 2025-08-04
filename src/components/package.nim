@@ -15,6 +15,9 @@ proc authorRepo(uri: Uri, hostname = false): kstring =
     name = name[0..^2]
   return name.jss
 
+proc isInactive(pkg: NimPackage): bool =
+  pkg.status in [Unreachable, Deleted]
+
 proc projectUrl*(pkg: NimPackage): VNode =
   let uri = parseUri($pkg.url)
   let icon =
@@ -26,13 +29,13 @@ proc projectUrl*(pkg: NimPackage): VNode =
       of "bitbucket.org": "i-simple-icons-bitbucket"
       else: "i-mdi-git"
   let repoName = uri.authorRepo(hostname = (icon == "i-mdi-git"))
-
+  let urlClass =
+    if pkg.isInactive: "line-through text-ctp-red" else: ""
   buildHtml:
     tdiv(class = "flex items-center space-x-2"):
       tdiv(class = icon.jss & " shrink-0")
-      a(href = pkg.url, class = if pkg.deleted: "line-through text-ctp-red" else: ""):
+      a(href = pkg.url, class = urlClass):
         text repoName.jss
-
 
 proc card*(pkg: NimPackage): VNode =
   result = buildHtml(tdiv(class = "flex flex-col bg-ctp-crust rounded-xl my-5 p-5")):
@@ -43,7 +46,7 @@ proc card*(pkg: NimPackage): VNode =
       if not pkg.isAlias:
         tdiv(class="flex flex-col md:items-end items-start"):
           pkg.projectUrl
-          if not pkg.deleted:
+          if not pkg.isInactive:
             span(class="md:text-sm text-xs text-nowrap text-ctp-subtextzero"):
               text "last commit: " & pkg.lastCommitTime.format("MMM d, YYYY")
     if pkg.isAlias:

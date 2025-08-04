@@ -7,6 +7,7 @@ type
   Metrics = object
     total: int
     isDeleted: int
+    isUnreachable: int
     isAlias: int
     isVersioned: int
     commitMonth: int
@@ -29,9 +30,12 @@ proc calculateMetics(ctx: Context): Metrics =
   for pkg in ctx.nimpkgs.packages.values():
     let timeSinceLastCommit = (currentTime - pkg.lastCommitTime)
 
+    case pkg.status
+    of Deleted: inc result.isDeleted
+    of Unreachable: inc result.isUnreachable
+    else: discard
     if pkg.versions.len > 0: inc result.isVersioned
     if pkg.isAlias: inc result.isAlias
-    if pkg.deleted: inc result.isDeleted
     if pkg.license != "": license.inc $pkg.license
     if timeSinceLastCommit < initDuration(weeks = 52):
       inc result.commitYear
@@ -68,6 +72,7 @@ proc totalsTable(metrics: Metrics): VNode =
         ("total", metrics.total),
         ("authors/orgs", metrics.authors.len),
         ("deleted", metrics.isDeleted),
+        ("unreachable", metrics.isUnreachable),
         ("alias", metrics.isAlias),
         ("versioned", metrics.isVersioned),
         ("last commit (< 1 year)", metrics.commitYear),

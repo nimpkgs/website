@@ -83,12 +83,15 @@ proc render*(packageName: string): VNode =
   if packageName notin ctx.nimpkgs.packages: return notfound.render()
   let pkg = ctx.nimpkgs.packages[packageName]
   result = buildHtml(tdiv(class = "flex flex-col")):
-    if pkg.deleted:
+    if pkg.status in [Unreachable, Deleted]:
       tdiv(class = "md:text-3xl text-2xl text-ctp-red my-5 "):
         tdiv(class = "flex items-center md:text-5xl text-2xl font-mono-casual font-black"):
           tdiv(class = "i-mdi-alert inline-block")
           span: text "WARNING!"
-        text "The provided url for this package is unreachable, it may have been deleted."
+        if pkg.status == Unreachable:
+          text "The provided url for this package is unreachable, it may have been deleted."
+        elif pkg.status == Deleted:
+          text "The package has been marked deleted."
     tdiv(class = "bg-ctp-mantle rounded p-5"):
       h2(class = textStyle & "text-3xl md:text-6xl font-bold font-mono-casual my-2"):
         text pkg.name
