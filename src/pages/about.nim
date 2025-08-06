@@ -38,6 +38,14 @@ proc render*(): VNode =
       a(href = "https://github.com/nim-lang/packages"):
         text "nim-lang/packages"
       text"."
+      tdiv(class = "flex flex-col md:flex-row gap-2 my-3"):
+        span: text "Status:"
+        a(href="https://github.com/nimpkgs/nimpkgs/actions/workflows/nightly.yml", class="flex"):
+          img(src = "https://github.com/nimpkgs/nimpkgs/actions/workflows/nightly.yml/badge.svg", class="object-none")
+        a(href="https://github.com/nimpkgs/nimpkgs/actions/workflows/weekly.yml", class="flex"):
+          img(src = "https://github.com/nimpkgs/nimpkgs/actions/workflows/weekly.yml/badge.svg", class="object-none")
+
+    tdiv:
       hr(class="my-5")
       tdiv(class="my-5"):
         for n in questionsList():
