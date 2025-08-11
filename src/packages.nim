@@ -26,23 +26,17 @@ type
     Unreachable,
     Deleted
 
+  Commit* = object
+    hash*: string
+    time*: Time # unix timestamp
+
   NimPackage* = object
     name*, url*, `method`*, description*,
       license*, web*, doc*, alias*: kstring
-    lastCommitHash*: kstring
-    lastCommitTime*: Time
+    commit*: Commit
     versions*: seq[Version]
     tags*: seq[kstring]
     status*: NimPackageStatus
-
-  # NimPackage* = object
-  #   name*, url*, `method`*, description*,
-  #     license*, web*, doc*, alias*: kstring
-  #   lastCommitHash*: kstring
-  #   lastCommitTime*: Time
-  #   versions*: seq[Version]
-  #   tags*: seq[kstring]
-  #   deleted*: bool
 
   NimPkgs* = object
     updated*: Time
@@ -71,7 +65,7 @@ proc parseHook*(s: string, i: var int, v: var Time) =
   v = fromUnix(num)
 
 proc sortCommit*(a, b: NimPackage): int =
-  cmp(a.lastCommitTime, b.lastCommitTime)
+  cmp(a.commit.time, b.commit.time)
 
 proc sortAlphabetical*(a, b: NimPackage): int =
   cmp(a.name, b.name)

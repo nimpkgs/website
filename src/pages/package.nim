@@ -51,9 +51,9 @@ proc renderLinks(pkg: NimPackage): VNode =
           span: text pkg.doc.noProtocol
 
 proc getTimeSinceCommit(pkg: NimPackage): kstring =
-  if pkg.lastCommitTime == fromUnix(0): "unknown".jss
+  if pkg.commit.time == fromUnix(0): "unknown".jss
   else:
-    let d = getTime() - pkg.lastCommitTime
+    let d = getTime() - pkg.commit.time
     d.inDays.jss & " days ago"
 
 proc renderPkgInfo(pkg: NimPackage): VNode =

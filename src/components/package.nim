@@ -48,7 +48,7 @@ proc card*(pkg: NimPackage): VNode =
           pkg.projectUrl
           if not pkg.isInactive:
             span(class="md:text-sm text-xs text-nowrap text-ctp-subtextzero"):
-              text "last commit: " & pkg.lastCommitTime.format("MMM d, YYYY")
+              text "last commit: " & pkg.commit.time.format("MMM d, YYYY")
     if pkg.isAlias:
       tdiv:
         text "alias for: "
