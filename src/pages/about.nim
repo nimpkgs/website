@@ -1,4 +1,4 @@
-import std/[tables]
+import std/[tables, strformat]
 import karax/[karaxdsl, vdom]
 
 import ../[context, packages, style]
@@ -29,6 +29,11 @@ proc questionsList(): seq[VNode] =
     a(href = "https://github.com/nimpkgs/nimpkgs/issues"): text "nimpkgs/nimpkgs"
     text "."
 
+proc statusBadge(workflow: string): VNode = 
+  buildHtml:
+    a(href=(fmt"https://github.com/nimpkgs/nimpkgs/actions/workflows/{workflow}.yml").cstring, class="flex"):
+      img(src = (fmt"https://github.com/nimpkgs/nimpkgs/actions/workflows/{workflow}.yml/badge.svg").cstring, class="object-none")
+
 proc render*(): VNode =
   result = buildHtml(tdiv):
     h2(class = headerStyle):
@@ -40,10 +45,8 @@ proc render*(): VNode =
       text"."
       tdiv(class = "flex flex-col md:flex-row gap-2 my-3"):
         span: text "Status:"
-        a(href="https://github.com/nimpkgs/nimpkgs/actions/workflows/nightly.yml", class="flex"):
-          img(src = "https://github.com/nimpkgs/nimpkgs/actions/workflows/nightly.yml/badge.svg", class="object-none")
-        a(href="https://github.com/nimpkgs/nimpkgs/actions/workflows/weekly.yml", class="flex"):
-          img(src = "https://github.com/nimpkgs/nimpkgs/actions/workflows/weekly.yml/badge.svg", class="object-none")
+        statusBadge("nightly")
+        statusBadge("serve")
 
     tdiv:
       hr(class="my-5")
