@@ -15,8 +15,7 @@ var ctx* = Context()
 
 let nimpkgsUrl =
   when defined(debug): "http://localhost:8080/nimpkgs.json"
-  else: "https://raw.githubusercontent.com/nimpkgs/nimpkgs/main/nimpkgs.json"
-
+  else: "https://nimpkgs.github.io/nimpkgs/nimpkgs.json"
 
 proc fetchPackages*(ctx: Context){.async.} =
   await fetch(nimpkgsUrl.jss)
