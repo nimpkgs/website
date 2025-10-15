@@ -20,7 +20,7 @@ proc questionsList(): seq[VNode] =
     text "Mainly for fun, I wanted an excuse to use Karax and the JavaScript backend of Nim for something. If it's helpful to you I'm glad."
   question("How do I add my package to nimpkgs?"):
     text "You don't! All packages are taken from the official repository at "
-    a(href="https://example.com"): text "nim-lang/packages"
+    a(href="https://github.com/nim-lang/packages"): text "nim-lang/packages"
     text "."
   question("How does nimpkgs get version information?"):
     text "In two words, brute force. Every night a github action scrapes packages for (version-like) tags."
