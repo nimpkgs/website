@@ -81,7 +81,7 @@ proc renderPkgInfo(pkg: NimPackage): VNode =
 
 proc render*(packageName: string): VNode =
   if packageName notin ctx.nimpkgs.packages: return notfound.render()
-  let pkg = ctx.nimpkgs.packages[packageName]
+  let pkg = ctx.package
   result = buildHtml(tdiv(class = "flex flex-col")):
     if pkg.status in [Unreachable, Deleted]:
       tdiv(class = "md:text-3xl text-2xl text-ctp-red my-5 "):
