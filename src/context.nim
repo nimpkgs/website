@@ -18,16 +18,19 @@ func loaded*(c: Context): bool =
 
 var ctx* = Context()
 
-let nimpkgsUrl =
-  when defined(debug): "http://localhost:8555/nimpkgs.json"
-  else: "https://nimpkgs.github.io/nimpkgs/nimpkgs.json"
+const
+  baseUrl =
+    when defined(debug): "http://localhost:8555/"
+    else: "https://nimpkgs.github.io/nimpkgs/"
+  nimpkgsUrl = baseUrl & "nimpkgs.json"
+  packagesUrl = baseUrl & "packages/"
 
 proc fetchPackages*(ctx: Context) {.async.} =
   if ctx.nimpkgsLoaded: return
   await fetch(nimpkgsUrl.jss)
     .then((r: Response) => r.text())
     .then(proc(txt: kstring) =
-      ctx.nimpkgs = fromJson($txt, NimPkgs)
+      ctx.nimpkgs = fromJson($txt, NimPkgs) # Using hooks otherwise this should probably be JSON.parse
       ctx.nimpkgsLoaded = true
       redraw()
     )
@@ -35,8 +38,7 @@ proc fetchPackages*(ctx: Context) {.async.} =
   )
 
 proc setPackage*(ctx: Context, packageName: string) {.async.} =
-  echo "getting the 'package info for", packageName
-  let uri = "http://localhost:8555/packages/" & packageName & ".json"
+  let uri = packagesUrl & packageName & ".json"
   await fetch(uri.cstring)
     .then((r: Response) => r.text())
     .then(proc(txt: kstring) =
@@ -50,9 +52,11 @@ proc check*(ctx: Context, data: RouterData) {.async.} =
   await ctx.fetchPackages
   if ($data.hashPart).startsWith("#/pkg/"):
     let packageName = $(data.hashPart).replace("#/pkg/", "")
-    if ctx.package.name != packageName:
+    if ctx.package.name != packageName.kstring:
       ctx.packageLoaded = false
       await ctx.setPackage(packageName)
+  else:
+    ctx.packageLoaded = false
 
 proc nimpkgsList*(): seq[NimPackage] {.inline.} =
   ctx.nimpkgs.packages.values.toSeq()

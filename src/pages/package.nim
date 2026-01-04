@@ -1,10 +1,9 @@
 import std/[algorithm, sugar]
-import karax/[kbase, karax, karaxdsl, kdom, vdom, jstrutils, ]
+import karax/[kbase, karax, karaxdsl, kdom, vdom, jstrutils]
 
 import ../[context, packages, style]
 import ../components/[tag, package]
 import ../lib
-import notfound
 
 proc openLink(link: kstring) {.kcall.} =
   discard open(window, link, "_self")
@@ -79,8 +78,9 @@ proc renderPkgInfo(pkg: NimPackage): VNode =
           pre:
             text "atlas use " & pkg.name
 
-proc render*(packageName: string): VNode =
-  if packageName notin ctx.nimpkgs.packages: return notfound.render()
+proc render*: VNode =
+  if ctx.package.name.isNil or not ctx.packageLoaded:
+    return buildHtml(tdiv())
   let pkg = ctx.package
   result = buildHtml(tdiv(class = "flex flex-col")):
     if pkg.status in [Unreachable, Deleted]:

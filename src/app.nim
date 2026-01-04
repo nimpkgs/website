@@ -1,12 +1,12 @@
 import std/strutils
 import karax/[karax, karaxdsl, vdom]
-import components/[header, button, footer]
+import components/[header, button, footer, loading]
 import pages/pages
 import context, lib
 
-proc loader(): VNode =
-  buildHtml(tdiv(class = "flex h-50")):
-    tdiv(class = "mx-auto my-auto lds-dual-ring")
+proc getPackageName(data: RouterData): string =
+  if ($data.hashPart).startswith("#/pkg/"):
+    result = ($data.hashPart).replace("#/pkg/", "")
 
 proc render(data: RouterData): VNode =
   when defined(debug): console.log ctx
@@ -21,18 +21,21 @@ proc render(data: RouterData): VNode =
       if uri.path != "/" and not uri.path.startsWith("#"):
         notfound.render()
       elif not ctx.nimpkgsLoaded:
-        loader()
+        loading("getting nimpkgs data")
       else:
+        # TODO: simplify router logic
         case data.hashPart
           of "#/index", "": index.render()
           of "#/search": search.render()
           of "#/metrics": metrics.render()
           of "#/about": about.render()
           else:
-            if ($data.hashPart).startswith("#/pkg/"):
-              package.render(($data.hashPart).replace("#/pkg/", ""))
-            else:
+            # either it routes to an existing package or the route is wrong
+            let pkgName = getPackageName(data)
+            if pkgName == "" or pkgName notin ctx.nimpkgs.packages:
               notfound.render()
+            else:
+              package.render() # do I need to pass in package?
     footerBar()
     scrollToTopButton()
 
