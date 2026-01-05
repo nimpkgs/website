@@ -37,6 +37,7 @@ type
     versions*: seq[Version]
     tags*: seq[kstring]
     status*: NimPackageStatus
+    commitTime*: int
 
   NimPkgs* = object
     updated*: Time

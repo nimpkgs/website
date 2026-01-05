@@ -12,7 +12,7 @@ proc render(data: RouterData): VNode =
   when defined(debug): console.log ctx
   discard check(ctx, data)
   var uri = currentUri()
-  result = buildHtml(tdiv(
+  buildHtml(tdiv(
       class = "lg:w-3/4 max-w-[90%] mx-auto md:text-lg text-sm min-h-screen flex flex-col"
       )
     ):

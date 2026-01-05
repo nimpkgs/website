@@ -71,6 +71,6 @@ proc getRecentReleases*(): seq[NimPackage] =
       pkgs.add pkg
 
   pkgs.sort(sortVersion, order = Descending)
-  return pkgs[0..10]
+  return pkgs[0..min(10, pkgs.len-1)]
 
 

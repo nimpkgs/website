@@ -12,7 +12,7 @@ type
     isVersioned: int
     commitMonth: int
     commitYear: int
-    tags, domains, authors, license, : seq[(string, int)]
+    tags, domains, authors, : seq[(string, int)]
 
 
 proc sortCounts(x, y: (string, int)): int =
@@ -24,11 +24,10 @@ proc calculateMetics(ctx: Context): Metrics =
     tags: CountTable[string]
     domains: CountTable[string]
     authors: CountTable[string]
-    license: CountTable[string]
 
   result.total = ctx.nimpkgs.packages.len
   for pkg in ctx.nimpkgs.packages.values():
-    let timeSinceLastCommit = (currentTime - pkg.commit.time)
+    let timeSinceLastCommit = (currentTime - fromUnix(pkg.commitTime))
 
     case pkg.status
     of Deleted: inc result.isDeleted
@@ -36,7 +35,6 @@ proc calculateMetics(ctx: Context): Metrics =
     else: discard
     if pkg.versions.len > 0: inc result.isVersioned
     if pkg.isAlias: inc result.isAlias
-    if pkg.license != "": license.inc $pkg.license
     if timeSinceLastCommit < initDuration(weeks = 52):
       inc result.commitYear
       if timeSinceLastCommit < initDuration(days = 30):
@@ -52,11 +50,9 @@ proc calculateMetics(ctx: Context): Metrics =
   result.tags = tags.pairs.toSeq()
   result.domains = domains.pairs.toSeq()
   result.authors = authors.pairs.toSeq()
-  result.license = license.pairs.toSeq()
   result.tags.sort(sortCounts, order = Descending)
   result.domains.sort(sortCounts, order = Descending)
   result.authors.sort(sortCounts, order = Descending)
-  result.license.sort(sortCounts, order = Descending)
 
 
 proc totalsTable(metrics: Metrics): VNode =
@@ -100,7 +96,6 @@ proc render*(): VNode =
     tdiv(class = "my-1"):
       text "a small collection of metrics from the current nim-lang/packages"
     metrics.totalsTable
-    blockCountList(metrics.tags[0..20], title = "tags (top 20)")
-    blockCountList(metrics.authors[0..20], title = "authors (top 20)")
-    blockCountList(metrics.license[0..20], title = "licenses (top 20)")
+    blockCountList(metrics.tags[0..19], title = "tags (top 20)")
+    blockCountList(metrics.authors[0..19], title = "authors (top 20)")
     blockCountList(metrics.domains, title = "domains")

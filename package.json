@@ -2,7 +2,7 @@
   "scripts": {
     "dev": "concurrently npm:server npm:uno:dev npm:watch npm:packageserver",
     "server": "http-server ./site --cors",
-    "packageserver": "http-server ../nimpkgs/site --cors --port 8188",
+    "packageserver": "http-server ../nimpkgs/site --cors --port 8188 --gzip",
     "watch": "nim watch",
     "build": "pnpm run uno:prd && pnpm run minify",
     "minify": "esbuild --minify --outdir=site --allow-overwrite site/app.js site/uno.css",
