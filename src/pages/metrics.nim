@@ -27,7 +27,7 @@ proc calculateMetics(ctx: Context): Metrics =
 
   result.total = ctx.nimpkgs.packages.len
   for pkg in ctx.nimpkgs.packages.values():
-    let timeSinceLastCommit = (currentTime - fromUnix(pkg.commitTime))
+    let timeSinceLastCommit = (currentTime - pkg.commitTime)
 
     case pkg.status
     of Deleted: inc result.isDeleted

@@ -30,7 +30,7 @@ proc projectUrl*(pkg: NimPackage): VNode =
       else: "i-mdi-git"
   let repoName = uri.authorRepo(hostname = (icon == "i-mdi-git"))
   let urlClass =
-    if pkg.isInactive: "line-through text-ctp-red" else: ""
+    kstring(if pkg.isInactive: "line-through text-ctp-red" else: "")
   buildHtml:
     tdiv(class = "flex items-center space-x-2"):
       tdiv(class = icon.jss & " shrink-0")
@@ -48,7 +48,7 @@ proc card*(pkg: NimPackage): VNode =
           pkg.projectUrl
           if not pkg.isInactive:
             span(class="md:text-sm text-xs text-nowrap text-ctp-subtextzero"):
-              text "last commit: " & pkg.commit.time.format("MMM d, YYYY")
+              text "last commit: " & pkg.commitTime.format("MMM d, YYYY")
     if pkg.isAlias:
       tdiv:
         text "alias for: "

@@ -37,7 +37,7 @@ type
     versions*: seq[Version]
     tags*: seq[kstring]
     status*: NimPackageStatus
-    commitTime*: int
+    commitTime*: Time
 
   NimPkgs* = object
     updated*: Time
@@ -66,7 +66,7 @@ proc parseHook*(s: string, i: var int, v: var Time) =
   v = fromUnix(num)
 
 proc sortCommit*(a, b: NimPackage): int =
-  cmp(a.commit.time, b.commit.time)
+  cmp(a.commitTime, b.commitTime)
 
 proc sortAlphabetical*(a, b: NimPackage): int =
   cmp(a.name, b.name)
