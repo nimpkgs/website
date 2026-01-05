@@ -20,7 +20,7 @@ var ctx* = Context()
 
 const
   baseUrl =
-    when defined(debug): "http://localhost:8555/"
+    when defined(debug): "http://localhost:8188/"
     else: "https://nimpkgs.github.io/nimpkgs/"
   nimpkgsUrl = baseUrl & "nimpkgs.json"
   packagesUrl = baseUrl & "packages/"
