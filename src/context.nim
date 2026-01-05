@@ -9,6 +9,7 @@ export tables
 type
   Context* = ref object
     nimpkgs*: NimPkgs
+    names*: seq[kstring]
     nimpkgsLoaded*: bool
     packageLoaded*: bool
     package*: NimPackage
@@ -31,6 +32,8 @@ proc fetchPackages*(ctx: Context) {.async.} =
     .then((r: Response) => r.text())
     .then(proc(txt: kstring) =
       ctx.nimpkgs = fromJson($txt, NimPkgs) # Using hooks otherwise this should probably be JSON.parse
+      # ctx.names = ctx.nimpkgs.packages.values().mapIt(it.name)
+      ctx.names = ctx.nimpkgs.packages.mapIt(it.name)
       ctx.nimpkgsLoaded = true
       redraw()
     )
@@ -59,14 +62,14 @@ proc check*(ctx: Context, data: RouterData) {.async.} =
     ctx.packageLoaded = false
 
 proc nimpkgsList*(): seq[NimPackage] {.inline.} =
-  ctx.nimpkgs.packages.values.toSeq()
+  ctx.nimpkgs.packages
 
-proc recentPackagesList*(): seq[NimPackage] {.inline.} =
-  ctx.nimpkgs.recent.mapIt(ctx.nimpkgs.packages[$it])
+proc recentPackagesList*(): seq[kstring] {.inline.} =
+  ctx.nimpkgs.recent
 
 proc getRecentReleases*(): seq[NimPackage] =
   var pkgs: seq[NimPackage]
-  for pkg in ctx.nimpkgs.packages.values():
+  for pkg in ctx.nimpkgs.packages:
     if pkg.versions.len > 0:
       pkgs.add pkg
 

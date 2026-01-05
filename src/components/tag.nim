@@ -23,7 +23,7 @@ proc renderTags*(tags: seq[kstring]): VNode =
 
 proc selectRandomTags*(ctx: Context): seq[kstring] =
   var tagCounts: CountTable[kstring]
-  for pkg in ctx.nimpkgs.packages.values():
+  for pkg in ctx.nimpkgs.packages:
     for tag in pkg.tags:
       tagCounts.inc tag
 

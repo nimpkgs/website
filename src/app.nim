@@ -31,8 +31,8 @@ proc render(data: RouterData): VNode =
           of "#/about": about.render()
           else:
             # either it routes to an existing package or the route is wrong
-            let pkgName = getPackageName(data)
-            if pkgName == "" or pkgName notin ctx.nimpkgs.packages:
+            let pkgName = getPackageName(data).cstring
+            if pkgName == "" or pkgName notin ctx.names:
               notfound.render()
             else:
               package.render() # do I need to pass in package?

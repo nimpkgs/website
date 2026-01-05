@@ -26,7 +26,7 @@ proc calculateMetics(ctx: Context): Metrics =
     authors: CountTable[string]
 
   result.total = ctx.nimpkgs.packages.len
-  for pkg in ctx.nimpkgs.packages.values():
+  for pkg in ctx.nimpkgs.packages:
     let timeSinceLastCommit = (currentTime - pkg.commitTime)
 
     case pkg.status

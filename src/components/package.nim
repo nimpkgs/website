@@ -65,12 +65,12 @@ proc card*(pkg: NimPackage): VNode =
             t.renderTag
 
 proc recentAddedPackagesList*(): VNode =
-  let pkgs = recentPackagesList()
+  let pkgNames = recentPackagesList()
   result = buildHtml(tdiv(class = "flex flex-wrap")):
-    for pkg in pkgs:
+    for name in pkgNames:
       a(class = borderStyle & "group p-2 m-1 space-x-1 no-underline text-ctp-text)",
-          href = "/#/pkg/" & pkg.name):
-        span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text pkg.name
+          href = "/#/pkg/" & name):
+        span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text name
 
 proc recentPackageVersionsList*(): VNode =
   let pkgs = getRecentReleases()
@@ -81,9 +81,9 @@ proc recentPackageVersionsList*(): VNode =
         span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text pkg.name
         span(class = "group-hover:text-ctp-mauve"): text pkg.versions[0].tag
 
-proc randomPackage*(ctx: Context): VNode =
-  let pkgName = ctx.nimpkgs.packages.keys().toSeq().sample()
-  result = buildHtml(tdiv(class = borderStyle & "my-2 m-1 p-2")):
-    a(href = "/#/pkg/" & pkgName.jss, class = "flex items-center text-ctp-text no-underline"):
-      tdiv(class = "i-mdi-dice-6")
-      span(class = "font-ctp-text"): text "random"
+# proc randomPackage*(ctx: Context): VNode =
+#   let pkgName = ctx.nimpkgs.packages.keys().toSeq().sample()
+#   result = buildHtml(tdiv(class = borderStyle & "my-2 m-1 p-2")):
+#     a(href = "/#/pkg/" & pkgName.jss, class = "flex items-center text-ctp-text no-underline"):
+#       tdiv(class = "i-mdi-dice-6")
+#       span(class = "font-ctp-text"): text "random"

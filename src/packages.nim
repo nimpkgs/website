@@ -43,7 +43,10 @@ type
     updated*: Time
     recent*: seq[kstring]
     packagesHash*: kstring
-    packages*: OrderedTable[string, NimPackage]
+    packages*: seq[NimPackage]
+
+proc `[]`*(t: OrderedTable[string, NimPackage], v: string): lent NimPackage {.deprecated.}=
+  tables.`[]`(t,v)
 
 proc newHook*(p: var NimPackage) =
   p.url = ""
