@@ -70,7 +70,7 @@ proc recentPackagesList*(): seq[kstring] {.inline.} =
 proc getRecentReleases*(): seq[NimPackage] =
   var pkgs: seq[NimPackage]
   for pkg in ctx.nimpkgs.packages:
-    if pkg.versions.len > 0:
+    if pkg.meta.versions.len > 0:
       pkgs.add pkg
 
   pkgs.sort(sortVersion, order = Descending)

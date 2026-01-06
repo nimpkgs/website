@@ -16,7 +16,7 @@ proc authorRepo(uri: Uri, hostname = false): kstring =
   return name.jss
 
 proc isInactive(pkg: NimPackage): bool =
-  pkg.status in [Unreachable, Deleted]
+  pkg.meta.status in [Unreachable, Deleted]
 
 proc projectUrl*(pkg: NimPackage): VNode =
   let uri = parseUri($pkg.url)
@@ -48,7 +48,7 @@ proc card*(pkg: NimPackage): VNode =
           pkg.projectUrl
           if not pkg.isInactive:
             span(class="md:text-sm text-xs text-nowrap text-ctp-subtextzero"):
-              text "last commit: " & pkg.commitTime.format("MMM d, YYYY")
+              text "last commit: " & pkg.meta.commitTime.format("MMM d, YYYY")
     if pkg.isAlias:
       tdiv:
         text "alias for: "
@@ -79,7 +79,7 @@ proc recentPackageVersionsList*(): VNode =
       a(class = borderStyle & "group p-2 m-1 space-x-1 no-underline text-ctp-text)",
           href = "/#/pkg/" & pkg.name):
         span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text pkg.name
-        span(class = "group-hover:text-ctp-mauve"): text pkg.versions[0].tag
+        span(class = "group-hover:text-ctp-mauve"): text pkg.meta.versions[0].tag
 
 # proc randomPackage*(ctx: Context): VNode =
 #   let pkgName = ctx.nimpkgs.packages.keys().toSeq().sample()

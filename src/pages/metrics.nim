@@ -27,13 +27,13 @@ proc calculateMetics(ctx: Context): Metrics =
 
   result.total = ctx.nimpkgs.packages.len
   for pkg in ctx.nimpkgs.packages:
-    let timeSinceLastCommit = (currentTime - pkg.commitTime)
+    let timeSinceLastCommit = (currentTime - pkg.meta.commitTime)
 
-    case pkg.status
+    case pkg.meta.status
     of Deleted: inc result.isDeleted
     of Unreachable: inc result.isUnreachable
     else: discard
-    if pkg.versions.len > 0: inc result.isVersioned
+    if pkg.meta.versions.len > 0: inc result.isVersioned
     if pkg.isAlias: inc result.isAlias
     if timeSinceLastCommit < initDuration(weeks = 52):
       inc result.commitYear

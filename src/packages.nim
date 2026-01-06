@@ -1,12 +1,12 @@
 import std/[
   algorithm, asyncjs,
-  strutils, sugar, tables, times, uri
+  strutils, sugar, tables, times, uri, options
 ]
 import karax/[kbase]
 import jsony
 
 import ./lib
-export algorithm, tables, times, asyncjs, sugar
+export algorithm, tables, times, asyncjs, sugar, options
 
 proc parseHook*(s: string, i: var int, v: var kstring) =
   var str: string
@@ -30,14 +30,45 @@ type
     hash*: string
     time*: Time # unix timestamp
 
+  # NimPackage* = object
+  #   name*, url*, `method`*, description*,
+  #     license*, web*, doc*, alias*: kstring
+  #   commit*: Commit
+  #   versions*: seq[Version]
+  #   tags*: seq[kstring]
+  #   status*: NimPackageStatus
+  #   commitTime*: Time
+
+  NimbleVersion* = object
+    kind*: kstring # enum?
+    ver*: kstring
+  NimbleRequire* = object
+    name*: kstring
+    str*: kstring
+    ver*: NimbleVersion
+  NimbleDump* = object
+    version*: kstring
+    requires*: seq[NimbleRequire]
+    bin*: seq[kstring]
+    srcDir*: kstring
+    # paths*: seq[string] # do I actually need these
+    # some combo of install and src is probably necessary to determine if it's a library or an executable/hybrid
+
+  NimPackageMeta = object
+    nimble*: Option[NimbleDump]
+    broken*: bool
+    hasBin*: bool
+    versions*: seq[Version] # move to meta?
+    commitTime*: Time
+    commit*: Commit
+    status*: NimPackageStatus
+    # deps: RawJson
+
   NimPackage* = object
     name*, url*, `method`*, description*,
       license*, web*, doc*, alias*: kstring
-    commit*: Commit
-    versions*: seq[Version]
     tags*: seq[kstring]
-    status*: NimPackageStatus
-    commitTime*: Time
+    meta*: NimPackageMeta
 
   NimPkgs* = object
     updated*: Time
@@ -58,7 +89,8 @@ proc newHook*(p: var NimPackage) =
   p.description = ""
   p.alias = ""
   p.tags = @[]
-  p.status = Unknown
+  # p.status = Unknown
+  # p.meta = NimPkgMeta(
 
 proc newHook*(nimpkgs: var NimPkgs) =
   nimpkgs.packagesHash = ""
@@ -69,15 +101,15 @@ proc parseHook*(s: string, i: var int, v: var Time) =
   v = fromUnix(num)
 
 proc sortCommit*(a, b: NimPackage): int =
-  cmp(a.commitTime, b.commitTime)
+  cmp(a.meta.commitTime, b.meta.commitTime)
 
 proc sortAlphabetical*(a, b: NimPackage): int =
   cmp(a.name, b.name)
 
 proc sortVersion*(a, b: NimPackage): int =
-  let lengths = (a.versions.len, b.versions.len)
+  let lengths = (a.meta.versions.len, b.meta.versions.len)
   if lengths[0] > 0 and lengths[1] > 0:
-    result = cmp(a.versions[0].time, b.versions[0].time)
+    result = cmp(a.meta.versions[0].time, b.meta.versions[0].time)
   elif lengths[0] == 0 and lengths[1] == 0:
     result = sortCommit(a, b)
   elif lengths[0] == 0:
