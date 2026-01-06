@@ -1,7 +1,7 @@
 import std/[tables, strformat]
 import karax/[karaxdsl, vdom]
 
-import ../[context, packages, style]
+import ../lib
 
 template question(q: static string, body: untyped): untyped =
   let node = buildHtml:

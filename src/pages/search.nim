@@ -1,30 +1,67 @@
-import std/[algorithm, strutils, sequtils, dom, uri]
+import std/[algorithm, strutils, sequtils, dom, uri, jsffi]
 
 import karax/[kbase, karax, karaxdsl, vdom, kdom]
 
-import ../[packages, context, lib]
+import ../lib
 import ../components/[package, search]
 
+# TODO: connect search/query/filters/uri and pgCtx
+
 type
-  # SortMethod = enum
-    # smAlphabetical, smCommitAge, smVersionAge
-    #
+  Filters = object
+    bin: bool ## package defines "bins"
+    valid: bool = true ## package is not deleted or unreachable
+    nimble: bool = true ## nimble correctly parses .nimble file
+    alias: bool = true ## alias packages
+
   PageContext = object
     sortMethod: SortMethod = smAlphabetical
     filteredPackages: seq[NimPackage]
     search: kstring
+    filters: Filters
 
 var pgCtx = PageContext()
 
-proc scrollToAnchor(a: string){.kcall.} =
+proc passFilters(pkg: NimPackage): bool =
+  if pgCtx.filters.valid:
+    if pkg.meta.status in {Deleted, Unreachable}:
+      return false
+  if pgCtx.filters.bin:
+    if not pkg.meta.hasBin:
+      return false
+  if pgCtx.filters.nimble:
+    if pkg.meta.broken:
+      return false
+  if not pgCtx.filters.alias:
+    if pkg.alias != "":
+      return false
+  return true
+
+proc searchPackages*(q: Query): seq[NimPackage] =
+  console.log pgCtx
+  if q == Query():
+    return collect:
+      for _, pkg in nimpkgsList():
+        if pkg.passFilters: pkg
+  collect:
+    for pkg in ctx.nimpkgs.packages:
+      if q ~= pkg and pkg.passFilters:
+        pkg
+
+proc scrollToAnchor(a: string) {.kcall.} =
   let d = getVNodeById(a)
   scrollIntoView(d.dom)
 
 proc letterlink(activeLinks: seq[char]): VNode = buildHtml:
+  let letters =
+    if pgCtx.sortMethod == smAlphabeticalReverse:
+      LowerCaseLetters.toSeq().reversed
+    else:
+      LowerCaseLetters.toSeq()
   tdiv(
       class = "flex flex-wrap md:text-xl text-lg capitalize w-full justify-evenly gap-x-2 md:gap-x-auto"
     ):
-    for l in LowercaseLetters:
+    for l in letters:
       tdiv(class = "w-5"):
         if l in activeLinks:
           span(
@@ -58,62 +95,124 @@ proc sortSelector(): VNode =
       class = "bg-ctp-crust rounded p-3",
       name = "sort",
       `id` = "sort-select",
-      onChange = getSearchInput
+      onChange = getSearchInput # is this insufficient now?
     ):
-      for i, msg in ["alphabetical", "recent commit", "recent version"]:
-        if i == ord(pgCtx.sortMethod):
-          option(value = ($i).cstring, selected = ""): text msg
-        else:
-          option(value = ($i).cstring): text msg
+      for sortMethod, msg in SortMethodDisplay:
+        option(value = ($ord(sortMethod)).cstring, selected = sortMethod == pgCtx.sortMethod):
+          text msg
 
 proc filteredPackagesDom(): VNode =
   if pgCtx.filteredPackages.len == 0:
     return buildHtml(): text "no match...try a different query"
   else:
-    case pgCtx.sortMethod:
-      of smAlphabetical:
-        pgCtx.filteredPackages.sort(sortAlphabetical)
-      of smCommitAge:
-        pgCtx.filteredPackages.sort(sortCommit, order = Descending)
-      of smVersionAge:
-        pgCtx.filteredPackages.sort(sortVersion, order = Descending)
-
     result = buildHtml(tdiv):
       tdiv(class = "text-ctp-surfacetwo"):
         text ($pgCtx.filteredPackages.len & "/" & $ctx.nimpkgs.packages.len) & " packages"
       case pgCtx.sortMethod:
-        of smAlphabetical:
+        of smAlphabetical, smAlphabeticalReverse:
           pgCtx.filteredPackages.alphabeticalPackageList
         else:
           for pkg in pgCtx.filteredPackages:
             pkg.card
 
-# TODO: combine with 'getSearchFromUri'
-proc getSortMethodFromUri*(): SortMethod =
-  result = smAlphabetical
+proc sortPkgs(pgCtx: var PageContext) =
+  case pgCtx.sortMethod:
+  of smAlphabetical:
+    pgCtx.filteredPackages.sort(sortAlphabetical)
+  of smAlphabeticalReverse:
+    pgCtx.filteredPackages.sort(sortAlphabetical, order = Descending)
+  of smCommitAgeRecent:
+    pgCtx.filteredPackages.sort(sortCommit, order = Descending)
+  of smCommitAgeOldest:
+    pgCtx.filteredPackages.sort(sortCommit)
+  of smVersionAgeRecent:
+    pgCtx.filteredPackages.sort(sortVersion, order = Descending)
+  of smVersionAgeOldest:
+    pgCtx.filteredPackages.sort(sortVersion)
+
+proc parseFilterBool(param: var bool, val: string) =
+  try:
+    param = parseBool(val)
+  except:
+    console.log("failed to parse parameter value as boolean: ", val)
+
+proc updateCtxFromUri() =
+  var sortSet = false
   var url = currentUri()
   for k, v in decodeQuery(url.query):
+    if k == "query":
+      pgCtx.search = v.jss
+    if k == "bin":
+      parseFilterBool(pgCtx.filters.bin, v)
+    if k == "nimble":
+      parseFilterBool(pgCtx.filters.nimble, v)
+    if k == "valid":
+      parseFilterBool(pgCtx.filters.valid, v)
+    if k == "alias":
+      parseFilterBool(pgCtx.filters.alias, v)
     if k == "sort":
-      case v
-      of "commit":
-        result = smCommitAge
-      of "version":
-        result = smVersionAge
-      else: discard
+      try:
+        pgCtx.sortMethod = parseEnum[SortMethod](v)
+        sortSet = true
+      except:
+        console.log getCurrentExceptionMsg().jss
+  if not sortSet:
+    pgCtx.sortMethod = smVersionAgeRecent
 
 proc update(pgCtx: var PageContext) =
-  pgCtx.filteredPackages = nimpkgsList()
-  pgCtx.sortMethod = getSortMethodFromUri()
-  pgCtx.search = getSearchFromUri()
+  updateCtxFromUri()
   pgCtx.filteredPackages = searchPackages(parseQuery(pgCtx.search))
+  sortPkgs pgCtx
+
+proc toggle(x: var bool) =
+  x = not x
+
+proc pillClass(enabled: bool): kstring =
+  result = "border rounded b-1 p-1 min-w-20 text-center ".jss
+  if enabled:
+    result &= " text-ctp-base "
+    result &= "bg-ctp-".jss & accent
+  else:
+    result &= "text-ctp-".jss & accent
+
+
+proc filterSelector(): VNode =
+  # TODO: add a hover effect?
+  buildHtml(tdiv(class="flex flex-row items-center")):
+    tdiv: text "filters:"
+    label(`for`= "bin", class="px-2"):
+      input(type="checkbox", checked=pgCtx.filters.bin, id = "bin", class="hidden"):
+        proc onChange() =
+          toggle pgCtx.filters.bin
+      tdiv(class = pillClass(pgCtx.filters.bin)):
+        text "bin"
+    label(`for`= "valid", class="px-2"):
+      input(type="checkbox", checked=pgCtx.filters.valid, id = "valid", class="hidden"):
+        proc onChange() =
+          toggle pgCtx.filters.valid
+      tdiv(class = pillClass(pgCtx.filters.valid)):
+        text "valid"
+    label(`for`= "nimble", class="px-2"):
+      input(type="checkbox", checked=pgCtx.filters.nimble, id = "nimble", class="hidden"):
+        proc onChange() =
+          toggle pgCtx.filters.nimble
+      tdiv(class = pillClass(pgCtx.filters.nimble)):
+        text "nimble"
+    label(`for`= "alias", class="px-2"):
+      input(type="checkbox", checked=pgCtx.filters.alias, id = "alias", class="hidden"):
+        proc onChange() =
+          toggle pgCtx.filters.alias
+      tdiv(class = pillClass(pgCtx.filters.alias)):
+        text "alias"
 
 proc render*(): VNode =
   pgCtx.update
   result =
     buildHtml(tdiv):
-      tdiv(class = "flex md:flex-row flex-col md:space-x-5"):
+      tdiv(class = "flex flex-col"):
         searchBar(value = pgCtx.search)
-        sortSelector()
+        tdiv(class ="flex md:flex-row md:space-x-5 flex-col md:mx-auto"):
+          sortSelector()
+          filterSelector()
       filteredPackagesDom()
-
 

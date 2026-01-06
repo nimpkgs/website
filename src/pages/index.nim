@@ -1,7 +1,7 @@
 import std/[sequtils, strutils, strformat]
 import karax/[karaxdsl, vdom]
 import ../components/[search, tag, package]
-import ../context
+import ../lib
 
 # TODO: add more "fun" facts?
 proc getFact(): string =

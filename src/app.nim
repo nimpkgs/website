@@ -2,7 +2,7 @@ import std/strutils
 import karax/[karax, karaxdsl, vdom]
 import components/[header, button, footer, loading]
 import pages/pages
-import context, lib
+import ./lib
 
 proc getPackageName(data: RouterData): string =
   if ($data.hashPart).startswith("#/pkg/"):

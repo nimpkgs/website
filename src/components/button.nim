@@ -1,6 +1,8 @@
 import std/[dom, sugar]
 import karax/[karax, karaxdsl, vdom, vstyles]
 
+import ../lib
+
 proc showScrollToTop() =
   # TODO: only show button when scrolling up
   let mybtn = document.getElementById("scrollBtn")
@@ -10,11 +12,6 @@ proc showScrollToTop() =
   mybtn.style.display =
     if show: "block"
     else: "none"
-
-
-proc scrollToTop*() =
-  document.body.scrollTop = 0
-  document.documentElement.scrollTop = 0
 
 document.addEventListener("scroll", (e: dom.Event) => showScrollToTop())
 

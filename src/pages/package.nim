@@ -1,7 +1,6 @@
 import std/[algorithm, sugar]
 import karax/[kbase, karax, karaxdsl, kdom, vdom, jstrutils]
 
-import ../[context, packages, style]
 import ../components/[tag, package]
 import ../lib
 
@@ -40,7 +39,7 @@ proc versionTable(pkg: NimPackage): VNode =
 
 proc renderAlias(pkg: NimPackage): VNode = buildHtml:
   tdiv:
-    text pkg.name & "is alias for "
+    text pkg.name & " is an alias for "
     a(href = "#/pkg/" & pkg.alias):
       text pkg.alias
 
@@ -66,28 +65,39 @@ proc getTimeSinceCommit(pkg: NimPackage): kstring =
     let d = getTime() - pkg.meta.commit.time
     d.inDays.jss & " days ago"
 
+proc getTimeSinceRelease(pkg: NimPackage): kstring =
+  if pkg.meta.versions.len == 0: "unknown".jss
+  else:
+    let d = getTime() - pkg.meta.versions[0].time
+    d.inDays.jss & " days ago"
+
 proc renderPkgInfo(pkg: NimPackage): VNode =
-  buildHtml:
+  buildHtml(tdiv):
     tdiv(class = "space-y-5 text-lg"):
       tdiv(class = "md:text-3xl"):
         text pkg.description
       pkg.renderLinks
       tdiv:
-        tdiv: text "license:"
-        text pkg.license.jss
-      tdiv:
-        tdiv: text "tags:"
+        text "tags: "
         pkg.tags.renderTags
       tdiv:
-        tdiv: text "last commit:"
-        text pkg.getTimeSinceCommit
+        text "license: "
+        text pkg.license.jss
+    tdiv(class = "mt-5"):
       tdiv:
-        tdiv: text "usage:"
-        tdiv(class = "bg-ctp-surfacezero rounded my-2 mx-3 p-2 w-auto overflow-auto"):
-          pre:
-            text "nimble install " & pkg.name
-          pre:
-            text "atlas use " & pkg.name
+        text "last commit: "
+        text pkg.getTimeSinceCommit
+      if pkg.meta.versions.len > 0:
+        tdiv:
+          text "last release: "
+          text pkg.getTimeSinceRelease
+      # tdiv:
+      #   tdiv: text "usage:"
+      #   tdiv(class = "bg-ctp-surfacezero rounded my-2 mx-3 p-2 w-auto overflow-auto"):
+      #     pre:
+      #       text "nimble install " & pkg.name
+      #     pre:
+      #       text "atlas use " & pkg.name
 
 # TODO: normalize header/sections styling
 proc nimbleRequiresView(reqs: seq[NimbleRequire]): VNode = 
@@ -96,8 +106,10 @@ proc nimbleRequiresView(reqs: seq[NimbleRequire]): VNode =
     ul(class = "pl-2"):
       for r in reqs:
         li(class = "flex flex-row"):
-          # TODO: make a nimpkgs link
-          p(class = "px-1 text-bold"): text r.name
+          # reuse the 'package cards with versions'
+          p(class = "px-1 text-bold"):
+            a(href = if r.name.startswith("http"): r.name else: "/#/pkg/" & r.name):
+              text r.name
           p: text r.str
 
 proc nimbleMetadataView(nimble: NimbleDump): VNode =
@@ -106,7 +118,7 @@ proc nimbleMetadataView(nimble: NimbleDump): VNode =
       text "metadata"
     if nimble.bin.len > 0:
       tdiv:
-        tdiv: text "bin:"
+        tdiv: text "bin(s):"
         span(class ="pl-2"): text nimble.bin.join(", ")
     if nimble.requires.len > 0:
       nimbleRequiresView(nimble.requires)

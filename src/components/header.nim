@@ -1,6 +1,6 @@
 import karax/[kbase, karaxdsl, vdom]
 
-import ../style
+import ../lib
 
 const headerLinks = [
   ("/#/search", "search"),
@@ -10,7 +10,7 @@ const headerLinks = [
 
 proc headerBar*(): VNode =
   result = buildHtml(tdiv(class = "md:m-5 m-1 flex flex-wrap")):
-    a(href = "/#", class = " no-underline"):
+    a(href = "#", class = " no-underline"):
       img(src = "img/logo-wide.svg", class = "inline md:h-4rem h-3rem px-1")
     tdiv(class = "grow")
     label(`for` = "menu-toggle",

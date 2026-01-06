@@ -1,9 +1,9 @@
-import std/[strutils, sequtils, uri, random]
+import std/[strutils, uri, random]
 
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils, ]
 
-import ../[packages, style, context, lib]
-import ../components/[tag]
+import ../lib
+import ./tag
 
 randomize()
 
@@ -40,7 +40,7 @@ proc projectUrl*(pkg: NimPackage): VNode =
 proc card*(pkg: NimPackage): VNode =
   result = buildHtml(tdiv(class = "flex flex-col bg-ctp-crust rounded-xl my-5 p-5")):
     tdiv(class = "flex flex-col md:flex-row md:justify-between"):
-      a(href = "/#/pkg/" & pkg.name):
+      a(href = "#/pkg/" & pkg.name):
         h2(class = (textStyle & "font-black md:text-2xl text-lg font-casual").kstring):
           text pkg.name
       if not pkg.isAlias:
@@ -69,17 +69,18 @@ proc recentAddedPackagesList*(): VNode =
   result = buildHtml(tdiv(class = "flex flex-wrap")):
     for name in pkgNames:
       a(class = borderStyle & "group p-2 m-1 space-x-1 no-underline text-ctp-text)",
-          href = "/#/pkg/" & name):
+          href = "#/pkg/" & name):
         span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text name
 
 proc recentPackageVersionsList*(): VNode =
-  let pkgs = getRecentReleases()
+  # let pkgs = getRecentReleases()
+  console.log ctx.nimpkgs.recent
   result = buildHtml(tdiv(class = "flex flex-wrap")):
-    for pkg in pkgs:
+    for name, version in ctx.nimpkgs.recent.released.pairs:
       a(class = borderStyle & "group p-2 m-1 space-x-1 no-underline text-ctp-text)",
-          href = "/#/pkg/" & pkg.name):
-        span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text pkg.name
-        span(class = "group-hover:text-ctp-mauve"): text pkg.meta.versions[0].tag
+          href = "#/pkg/" & name.jss):
+        span(class = textStyle & "group-hover:text-ctp-mauve font-bold font-mono-casual"): text name
+        span(class = "group-hover:text-ctp-mauve"): text version
 
 # proc randomPackage*(ctx: Context): VNode =
 #   let pkgName = ctx.nimpkgs.packages.keys().toSeq().sample()

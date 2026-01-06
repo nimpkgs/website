@@ -1,7 +1,7 @@
 import std/[algorithm, sequtils, tables, uri, strutils, times]
 import karax/[kbase, karaxdsl, vdom, jstrutils]
 
-import ../[context, packages, style, lib]
+import ../lib
 
 type
   Metrics = object
@@ -12,6 +12,8 @@ type
     isVersioned: int
     commitMonth: int
     commitYear: int
+    hasBin: int
+    nimble: int
     tags, domains, authors, : seq[(string, int)]
 
 
@@ -27,12 +29,14 @@ proc calculateMetics(ctx: Context): Metrics =
 
   result.total = ctx.nimpkgs.packages.len
   for pkg in ctx.nimpkgs.packages:
-    let timeSinceLastCommit = (currentTime - pkg.meta.commitTime)
+    if pkg.meta.status in {Deleted, Unreachable}:
+      case pkg.meta.status
+      of Deleted: inc result.isDeleted
+      of Unreachable: inc result.isUnreachable
+      else: discard
+      continue # metrics are about actual packages not dead links
 
-    case pkg.meta.status
-    of Deleted: inc result.isDeleted
-    of Unreachable: inc result.isUnreachable
-    else: discard
+    let timeSinceLastCommit = (currentTime - pkg.meta.commitTime)
     if pkg.meta.versions.len > 0: inc result.isVersioned
     if pkg.isAlias: inc result.isAlias
     if timeSinceLastCommit < initDuration(weeks = 52):
@@ -46,6 +50,10 @@ proc calculateMetics(ctx: Context): Metrics =
     if pkg.tags.len > 0:
       for tag in pkg.tags:
         tags.inc $tag
+    if pkg.meta.hasBin:
+      inc result.hasBin
+    if not pkg.meta.broken:
+      inc result.nimble
 
   result.tags = tags.pairs.toSeq()
   result.domains = domains.pairs.toSeq()
@@ -71,6 +79,8 @@ proc totalsTable(metrics: Metrics): VNode =
         ("unreachable", metrics.isUnreachable),
         ("alias", metrics.isAlias),
         ("versioned", metrics.isVersioned),
+        ("executable(s)", metrics.hasBin),
+        ("works w/nimble", metrics.nimble),
         ("last commit (< 1 year)", metrics.commitYear),
         ("last commit (< 30 days)", metrics.commitMonth),
         ]:

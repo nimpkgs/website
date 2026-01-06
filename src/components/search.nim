@@ -1,6 +1,6 @@
-import std/[strutils, uri]
+import std/[strutils]
 import karax/[kbase, karax, karaxdsl, vdom, jstrutils]
-import ../[lib, packages, style, context]
+import ../lib
 
 type
   Query* = object
@@ -8,6 +8,7 @@ type
 
 proc parseQuery*(s: kstring): Query =
   result = Query()
+  if s == nil: return
   if ":" notin s:
     result.all = s; return
 
@@ -35,7 +36,7 @@ proc genericSearchString(p: NimPackage): kstring =
 func norm(s: kstring): string =
   ($s).replace("-").replace(" ").normalize()
 
-func `!->`(a, b: kstring): bool = 
+func `!->`(a, b: kstring): bool =
   norm(a) notin norm(b)
 
 proc hasTag(pkg: NimPackage, tag: string): bool =
@@ -46,27 +47,12 @@ proc hasTag(pkg: NimPackage, tag: string): bool =
       return false
   return true
 
-proc `~=`(q: Query, pkg: NimPackage): bool =
+proc `~=`*(q: Query, pkg: NimPackage): bool =
   let searchStr = pkg.genericSearchString()
   if (q.name !-> pkg.name) or (q.license !-> pkg.license) or pkg.hasTag($q.tag):
     return
   if q.all.toLowerAscii() in searchStr:
     return true
-
-proc searchPackages*(q: Query): seq[NimPackage] =
-  if q == Query(): return nimpkgsList()
-
-  collect:
-    for _, pkg in ctx.nimpkgs.packages:
-      if q ~= pkg: pkg
-
-proc getSearchFromUri*(): kstring =
-  result = ""
-  var url = currentUri()
-  if url.query == "": return
-  for k, v in decodeQuery(url.query):
-    if k == "query":
-      return v.kstring
 
 proc searchBar*(value = jss""): Vnode =
   buildHtml(tdiv(class = "flex flex-row my-2 grow")):
@@ -79,7 +65,6 @@ proc searchBar*(value = jss""): Vnode =
       onChange = getSearchInput
     )
     button(
-      # `type` = "button",
       class = borderStyle & "p-2 flex items-center",
       onClick = getSearchInput
     ):

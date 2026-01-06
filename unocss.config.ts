@@ -94,8 +94,8 @@ export default defineConfig({
     `,
     },
   ],
-  // accent color is dynamically generated 
-  safelist: Object.keys(catppuccinColors).flatMap((key: string) => [`text-ctp-${key}`, `b-ctp-${key}`]),
+  // accent color is dynamically generated so pre-populate the styles
+  safelist: Object.keys(catppuccinColors).flatMap((key: string) => [`text-ctp-${key}`, `b-ctp-${key}`, `bg-ctp-${key}`]),
   presets: [presetUno(), presetIcons()],
   rules: [
     ["font-casual", { "font-variation-settings": "'CASL' 1;" }],
