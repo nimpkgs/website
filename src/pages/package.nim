@@ -8,19 +8,30 @@ import ../lib
 proc openLink(link: kstring) {.kcall.} =
   discard open(window, link, "_self")
 
+# TODO: version header?
+# links broken for none github sites
+
+proc link(pkg: NimPackage, version: Version): kstring =
+  if pkg.canonicalUrl.startsWith("https://codeberg.org"):
+    return pkg.canonicalUrl & "/src/tag/" & version.tag.jss
+
+  # this version should work for github and gitlab
+  return pkg.canonicalUrl & "/tree/" & version.tag.jss
+
 proc versionTable(pkg: NimPackage): VNode =
   var versions = pkg.versions
   versions.sort((a, b: Version) => cmp(a.time, b.time), order = Descending)
-
-  buildHtml(tdiv(class = "my-5 p-10 bg-ctp-crust rounded")):
+  buildHtml(tdiv(class = "my-5 p-5 bg-ctp-crust rounded")):
+    h2(class = textStyle & "text-3xl md:text-6xl font-bold font-mono-casual mx-auto mb-2"):
+      text "versions"
     table(class = "table-auto w-full text-center"):
       tr:
-        th: text "version"
+        th: text "tag"
         th: text "released"
         th: text "hash"
       for version in versions:
         tr(
-          onClick = openLink(pkg.canonicalUrl & "/tree/" & version.tag.jss),
+          onClick = openLink(link(pkg, version)),
           class = "link"
         ):
           td: text version.tag
