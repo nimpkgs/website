@@ -122,10 +122,6 @@ proc nimbleMetadataView(nimble: NimbleDump): VNode =
         span(class ="pl-2"): text nimble.bin.join(", ")
     if nimble.requires.len > 0:
       nimbleRequiresView(nimble.requires)
-    # TODO: make the info good and remove this
-    span(class= "text-sm text-ctp-yellow inline-block pt-5"):
-      tdiv(class = "i-mdi-alert inline-block")
-      text "this info is still experimental, and may have errors!"
 
 proc render*: VNode =
   if ctx.package.name.isNil or not ctx.packageLoaded:
