@@ -78,15 +78,6 @@ type
     hash*: string
     time*: Time # unix timestamp
 
-  # NimPackage* = object
-  #   name*, url*, `method`*, description*,
-  #     license*, web*, doc*, alias*: kstring
-  #   commit*: Commit
-  #   versions*: seq[Version]
-  #   tags*: seq[kstring]
-  #   status*: NimPackageStatus
-  #   commitTime*: Time
-
   NimbleVersion* = object
     kind*: kstring # enum?
     ver*: kstring
@@ -110,7 +101,6 @@ type
     commitTime*: Time
     commit*: Commit
     status*: NimPackageStatus
-    # deps: RawJson
 
   NimPackage* = object
     name*, url*, `method`*, description*,
