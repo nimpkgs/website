@@ -14,41 +14,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        with:
-          version: 8
-          run_install: false
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+      - uses: oven-sh/setup-bun@v2
 
       - uses: jiro4989/setup-nim-action@v2
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
-        run: pnpm install
+        run: bun install
 
       - name: Build Website
         run: |
-          nimble setup -l
-          nimble install -d -Y
+          nimble setup -l -Y
           nim build
 
       - name: Upload artifact

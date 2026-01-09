@@ -2,7 +2,7 @@ switch("backend","js")
 
 task build, "build":
   selfExec "js -o:site/app.js -d:release src/app.nim"
-  exec "pnpm run build"
+  exec "bun run build"
 
 task watch, "rebuild on change":
   exec (
