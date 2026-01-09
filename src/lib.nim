@@ -273,22 +273,25 @@ proc pkgPrefix(name: string): string =
 
 proc setPackage*(ctx: Context, packageName: string) {.async.} =
   let uri = parseUri(packagesUrl) / pkgPrefix(packageName)  / packageName / "pkg.json"
-  await fetch(uri.jss)
+  if ctx.package.name == packageName.kstring:
+    ctx.packageLoaded = true
+  else:
+    ctx.packageLoaded = false
+    await fetch(uri.jss)
     .then((r: Response) => r.text())
     .then(proc(txt: kstring) =
       ctx.package = fromJson($txt, NimPackage)
       ctx.packageLoaded = true
-      redraw()
     )
     .catch((err: Error) => console.log err)
+  redraw()
 
-proc check*(ctx: Context, data: RouterData) {.async.} =
+proc check*(ctx: Context) {.async.} =
   await ctx.fetchPackages
-  if ($data.hashPart).startsWith("#/pkg/"):
-    let packageName = $(data.hashPart).replace("#/pkg/", "")
-    if ctx.package.name != packageName.kstring:
-      ctx.packageLoaded = false
-      await ctx.setPackage(packageName)
+  let uri = currentUri()
+  if (uri.anchor).startsWith("/pkg/") and not ctx.packageLoaded:
+    let requested = $(uri.anchor).replace("/pkg/", "")
+    await ctx.setPackage(requested)
   else:
     ctx.packageLoaded = false
 

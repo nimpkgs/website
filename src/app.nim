@@ -10,7 +10,7 @@ proc getPackageName(data: RouterData): string =
 
 proc render(data: RouterData): VNode =
   when defined(debug): console.log ctx
-  discard check(ctx, data)
+  discard check(ctx)
   var uri = currentUri()
   buildHtml(tdiv(
       class = "lg:w-3/4 max-w-[90%] mx-auto md:text-lg text-sm min-h-screen flex flex-col"
