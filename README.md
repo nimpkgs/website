@@ -1,7 +1,7 @@
 # nimpkgs
 
 The [nimble.directory](https://nimble.directory) alternative no one asked for, that I felt like making anyways.
-Check it out at [nimpkgs.dayl.in](https://nimpkgs.dayl.in).
+Check it out at [nimpkgs.org](https://nimpkgs.org).
 
 <hr>
 

@@ -245,12 +245,12 @@ var ctx* = Context()
 const
   baseUrl =
     when defined(debug): "http://localhost:8189/"
-    else: "https://nimpkgs.github.io/nimpkgs/"
+    else: "https://registry.nimpkgs.org/"
   indexUrl = baseUrl & "nimpkgs.json"
   packagesUrl = baseUrl & "packages/"
   nimpkgsUrl* =
     when defined(debug): "http://localhost:8188"
-    else: "https://nimpkgs.dayl.in/"
+    else: "https://nimpkgs.org/"
 
 proc fetchPackages*(ctx: Context) {.async.} =
   if ctx.nimpkgsLoaded: return
