@@ -7,7 +7,7 @@ const packagesGitUrlBase = "https://github.com/nim-lang/packages/blob/".kstring
 
 proc footerBar*(): VNode =
   var links: seq[(kstring, kstring)]
-  if ctx.loaded:
+  if ctx.nimpkgsLoaded:
     let packagesAbbr = ($ctx.nimpkgs.packagesHash)[0..8].kstring
     links.add (
       packagesGitUrlBase & ctx.nimpkgs.packagesHash & "/packages.json".kstring,
@@ -15,7 +15,7 @@ proc footerBar*(): VNode =
     )
   links.add ("http://github.com/nimpkgs/website".kstring, "source".kstring)
   result = buildHtml(footer(class = "mt-auto md:mx-10 flex flex-col md:flex-row md:justify-between md:items-center mb-5")):
-    if ctx.loaded:
+    if ctx.nimpkgsLoaded:
       tdiv(class = "text-xs text-ctp-subtextzero px-1"):
         text "updated: " & ctx.nimpkgs.updated.format("yyyy-MM-ddZZZ")
     tdiv():
