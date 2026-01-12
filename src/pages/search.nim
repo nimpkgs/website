@@ -5,7 +5,7 @@ import karax/[kbase, karax, karaxdsl, vdom, kdom]
 import ../lib
 import ../components/[package, search]
 
-# TODO: connect search/query/filters/uri and pgCtx
+# TODO: better connect search/query/filters/uri and pgCtx
 
 type
   Filters = object
@@ -22,6 +22,7 @@ type
 
 var pgCtx = PageContext()
 
+# TODO: make filters part of Query
 proc passFilters(pkg: NimPackage): bool =
   if pgCtx.filters.valid:
     if pkg.meta.status in {Deleted, Unreachable}:
@@ -175,35 +176,22 @@ proc pillClass(enabled: bool): kstring =
   else:
     result &= "text-ctp-".jss & accent
 
+proc pillFilterButton(name: string, checked: bool, cb: proc() ): VNode =
+  buildHtml:
+    label(`for`= name, class="px-1 m-1"):
+      input(type="checkbox", checked=checked, id = name, class="hidden", onChange = cb)
+      tdiv(class = pillClass(checked)):
+        text name
 
 proc filterSelector(): VNode =
   # TODO: add a hover effect?
   buildHtml(tdiv(class="flex flex-row items-center")):
     tdiv: text "filters:"
-    label(`for`= "bin", class="px-2"):
-      input(type="checkbox", checked=pgCtx.filters.bin, id = "bin", class="hidden"):
-        proc onChange() =
-          toggle pgCtx.filters.bin
-      tdiv(class = pillClass(pgCtx.filters.bin)):
-        text "bin"
-    label(`for`= "valid", class="px-2"):
-      input(type="checkbox", checked=pgCtx.filters.valid, id = "valid", class="hidden"):
-        proc onChange() =
-          toggle pgCtx.filters.valid
-      tdiv(class = pillClass(pgCtx.filters.valid)):
-        text "valid"
-    label(`for`= "nimble", class="px-2"):
-      input(type="checkbox", checked=pgCtx.filters.nimble, id = "nimble", class="hidden"):
-        proc onChange() =
-          toggle pgCtx.filters.nimble
-      tdiv(class = pillClass(pgCtx.filters.nimble)):
-        text "nimble"
-    label(`for`= "alias", class="px-2"):
-      input(type="checkbox", checked=pgCtx.filters.alias, id = "alias", class="hidden"):
-        proc onChange() =
-          toggle pgCtx.filters.alias
-      tdiv(class = pillClass(pgCtx.filters.alias)):
-        text "alias"
+    tdiv(class = "flex flex-wrap"):
+      pillFilterButton("bin", pgCtx.filters.bin, () => toggle pgCtx.filters.bin)
+      pillFilterButton("valid", pgCtx.filters.valid, () => toggle pgCtx.filters.valid)
+      pillFilterButton("nimble", pgCtx.filters.nimble, () => toggle pgCtx.filters.nimble)
+      pillFilterButton("alias", pgCtx.filters.alias, () => toggle pgCtx.filters.alias)
 
 proc render*(): VNode =
   pgCtx.update
