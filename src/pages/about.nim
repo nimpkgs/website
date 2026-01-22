@@ -35,6 +35,7 @@ proc statusBadge(workflow: string): VNode =
       img(src = (fmt"https://github.com/nimpkgs/nimpkgs/actions/workflows/{workflow}.yml/badge.svg").cstring, class="object-none")
 
 proc render*(): VNode =
+  setTitle "about"
   result = buildHtml(tdiv):
     h2(class = headerStyle):
       text "About"

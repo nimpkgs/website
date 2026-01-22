@@ -295,6 +295,12 @@ proc check*(ctx: Context) {.async.} =
   else:
     ctx.packageLoaded = false
 
+proc setTitle*(suffix = "") =
+  var title = "nimpkgs"
+  if suffix != "":
+    title &= " - " & suffix
+  document.title = title
+
 proc nimpkgsList*(): seq[NimPackage] {.inline.} =
   ctx.nimpkgs.packages
 

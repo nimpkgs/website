@@ -195,6 +195,7 @@ proc filterSelector(): VNode =
 
 proc render*(): VNode =
   pgCtx.update
+  setTitle "search - " & $pgCtx.search
   result =
     buildHtml(tdiv):
       tdiv(class = "flex flex-col"):

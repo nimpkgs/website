@@ -127,6 +127,7 @@ proc render*: VNode =
   if ctx.package.name.isNil or not ctx.packageLoaded:
     return buildHtml(tdiv())
   let pkg = ctx.package
+  setTitle($pkg.name)
   result = buildHtml(tdiv(class = "flex flex-col")):
     if pkg.meta.status in [Unreachable, Deleted]:
       tdiv(class = "md:text-3xl text-2xl text-ctp-red my-5 "):

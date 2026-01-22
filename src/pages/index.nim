@@ -16,6 +16,7 @@ proc funFact(): VNode =
 
 
 proc render*(): VNode =
+  setTitle()
   result = buildHtml(tdiv(class = "justify-center")):
     tdiv(class = "flex flex-col space-y-5"):
       tdiv(class = "text-center"):

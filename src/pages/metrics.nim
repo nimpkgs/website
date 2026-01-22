@@ -100,6 +100,7 @@ proc blockCountList(itemList: seq[(string, int)], title: string): VNode =
 
 proc render*(): VNode =
   let metrics = ctx.calculateMetics()
+  setTitle "metrics"
   result = buildHtml(tdiv):
     h2(class = "text-4xl"):
       text "metrics"
