@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import { flavors } from "@catppuccin/palette";
-import { defineConfig, presetUno, presetIcons } from "unocss";
+import { defineConfig, presetWind4, presetIcons } from "unocss";
 
 const generatePalette = (): { [key: string]: string } => {
   const colors: { [key: string]: string } = {};
@@ -93,7 +93,7 @@ export default defineConfig({
   ],
   // accent color is dynamically generated so pre-populate the styles
   safelist: Object.keys(catppuccinColors).flatMap((key: string) => [`text-ctp-${key}`, `b-ctp-${key}`, `bg-ctp-${key}`, `shadow-ctp-${key}`]),
-  presets: [presetUno(), presetIcons()],
+  presets: [presetWind4(), presetIcons()],
   rules: [
     ["font-casual", { "font-variation-settings": "'CASL' 1;" }],
     ["font-mono-casual", { "font-variation-settings": "'MONO' 1, 'CASL' 1;" }],
