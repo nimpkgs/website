@@ -160,6 +160,9 @@ proc updateCtxFromUri() =
   if not sortSet:
     pgCtx.sortMethod = smVersionAgeRecent
 
+  if pgCtx.search.isNull:
+    pgCtx.search = "".cstring
+
 proc update(pgCtx: var PageContext) =
   updateCtxFromUri()
   pgCtx.filteredPackages = searchPackages(parseQuery(pgCtx.search))
