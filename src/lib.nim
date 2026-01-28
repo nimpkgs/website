@@ -299,7 +299,7 @@ proc setTitle*(suffix = "") =
   var title = "nimpkgs"
   if suffix != "":
     title &= " - " & suffix
-  document.title = title
+  document.title = title.cstring
 
 proc nimpkgsList*(): seq[NimPackage] {.inline.} =
   ctx.nimpkgs.packages
