@@ -13,8 +13,8 @@ proc navDropdown: VNode = buildHtml(tdiv(class="flex relative")):
     `for` = "menu-toggle",
     class = "cursor-pointer lg:hidden items-center px-3 py-2 flex"
     ): text "menu"
-  input(class = "hidden", type = "checkbox", `id` = "menu-toggle")
-  tdiv(class = "hidden absolute right-0 top-full z-50 bg-ctp-base lg:flex lg:static lg:items-center",
+  input(class="hidden peer", type = "checkbox", `id` = "menu-toggle")
+  tdiv(class = "hidden peer-checked:block absolute right-0 top-full z-50 bg-ctp-base lg:flex lg:static lg:items-center",
       `id` = "menu"):
     nav(class = "flex justify-end rounded-md lg:border-none border border-1 b-ctp-" & accent):
       ul(class = "lg:flex items-center"):

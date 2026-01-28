@@ -32,9 +32,6 @@ export default defineConfig({
       font-family: 'Recursive', monospace;
       font-variation-settings: 'MONO' 1;
     }
-    #menu-toggle:checked + #menu {
-		  display: block;
-		}
     a {
       text-decoration: underline dotted;
       color: ${catppuccinColors.rosewater};
