@@ -10,6 +10,7 @@ export algorithm, tables, times, asyncjs, sugar, options, jsconsole
 
 proc jss*[T](arg: T): kstring = ($arg).kstring
 proc jss*(arg: kstring): kstring = arg
+func `&`*(a: string, b: kstring): kstring = kstring($a & $b)
 
 proc noProtocol*(s: kstring): kstring =
   ($s)
