@@ -64,29 +64,30 @@ proc calculateMetics(ctx: Context): Metrics =
 
 
 proc totalsTable(metrics: Metrics): VNode =
-  let cellClass = "border md:px-10 px-5" & borderStyle
+  let cellClass = "md:px-10 px-5" & borderStyle
   buildHtml(tdiv(class = "my-10")):
     tdiv:
       h2(class = "text-2xl"): text "totals"
-    table(class = "bg-ctp-mantle"):
-      tr:
-        th(class = cellClass): text "category"
-        th(class = cellClass): text "number"
-      for (msg, metric) in [
-        ("total", metrics.total),
-        ("authors/orgs", metrics.authors.len),
-        ("deleted", metrics.isDeleted),
-        ("unreachable", metrics.isUnreachable),
-        ("alias", metrics.isAlias),
-        ("versioned", metrics.isVersioned),
-        ("executable(s)", metrics.hasBin),
-        ("works w/nimble", metrics.nimble),
-        ("last commit (< 1 year)", metrics.commitYear),
-        ("last commit (< 30 days)", metrics.commitMonth),
-        ]:
+    tdiv(class = "w-fit" & borderStyle):
+      table(class = "bg-ctp-mantle border-collapse border-hidden rounded"):
         tr:
-          td(class = cellClass): text msg
-          td(class = cellClass): text metric.jss
+          th(class = cellClass): text "category"
+          th(class = cellClass): text "number"
+        for (msg, metric) in [
+          ("total", metrics.total),
+          ("authors/orgs", metrics.authors.len),
+          ("deleted", metrics.isDeleted),
+          ("unreachable", metrics.isUnreachable),
+          ("alias", metrics.isAlias),
+          ("versioned", metrics.isVersioned),
+          ("executable(s)", metrics.hasBin),
+          ("works w/nimble", metrics.nimble),
+          ("last commit (< 1 year)", metrics.commitYear),
+          ("last commit (< 30 days)", metrics.commitMonth),
+          ]:
+          tr:
+            td(class = cellClass): text msg
+            td(class = cellClass): text metric.jss
 
 
 proc blockCountList(itemList: seq[(string, int)], title: string): VNode =
