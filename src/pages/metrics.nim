@@ -37,7 +37,7 @@ proc calculateMetics(ctx: Context): Metrics =
       continue # metrics are about actual packages not dead links
 
     let timeSinceLastCommit = (currentTime - pkg.meta.commitTime)
-    if pkg.meta.versions.len > 0: inc result.isVersioned
+    if pkg.meta.versionTime != Time(): inc result.isVersioned
     if pkg.isAlias: inc result.isAlias
     if timeSinceLastCommit < initDuration(weeks = 52):
       inc result.commitYear

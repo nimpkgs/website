@@ -100,6 +100,7 @@ type
     hasBin*: bool
     versions*: seq[Version] # move to meta?
     commitTime*: Time
+    versionTime*: Time
     commit*: Commit
     status*: NimPackageStatus
 
@@ -148,15 +149,9 @@ proc sortAlphabetical*(a, b: NimPackage): int =
   cmp(a.name.toLowerAscii(), b.name.toLowerAscii())
 
 proc sortVersion*(a, b: NimPackage): int =
-  let lengths = (a.meta.versions.len, b.meta.versions.len)
-  if lengths[0] > 0 and lengths[1] > 0:
-    result = cmp(a.meta.versions[0].time, b.meta.versions[0].time)
-  elif lengths[0] == 0 and lengths[1] == 0:
+  result = cmp(a.meta.versionTime, b.meta.versionTime)
+  if result == 0:
     result = sortCommit(a, b)
-  elif lengths[0] == 0:
-    result = -1
-  else:
-    result = 1
 
 proc isAlias*(p: NimPackage): bool {.inline.} = p.alias != ""
 
