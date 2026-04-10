@@ -113,7 +113,7 @@ type
 type
   RecentPackages = object
     added*: seq[kstring]
-    released*: Table[string, kstring] # key must be string for jsony to parse?
+    released*: OrderedTable[string, kstring] # key must be string for jsony to parse?
 
   # TODO: rename Index?
   NimPkgs* = object
