@@ -18,7 +18,7 @@
           nim
           nimble
           watchexec
-          pkgs.bun
+          pnpm
         ];
       };
     });
