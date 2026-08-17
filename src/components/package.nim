@@ -74,7 +74,6 @@ proc recentAddedPackagesList*(): VNode =
 
 proc recentPackageVersionsList*(): VNode =
   # let pkgs = getRecentReleases()
-  console.log ctx.nimpkgs.recent
   result = buildHtml(tdiv(class = "flex flex-wrap")):
     for name, version in ctx.nimpkgs.recent.released.pairs:
       a(class = borderStyle & "group p-2 m-1 space-x-1 no-underline text-ctp-text)",

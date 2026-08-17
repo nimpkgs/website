@@ -24,8 +24,9 @@ proc parseQuery*(s: kstring): Query =
         result.name = v
       of "tag":
         result.tag = v
-      of "license":
-        result.license = v
+      # license data not currently supported in main search
+      # of "license":
+        # result.license = v
       else: discard
     else:
       result.all &= part
