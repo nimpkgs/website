@@ -140,6 +140,8 @@ proc parseFilterBool(param: var bool, val: string) =
 proc updateCtxFromUri() =
   var sortSet = false
   var url = currentUri()
+  pgCtx.search = "".jss
+
   for k, v in decodeQuery(url.query):
     if k == "query":
       pgCtx.search = v.jss
