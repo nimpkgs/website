@@ -4,7 +4,7 @@ import ../lib
 
 type
   Query* = object
-    all, name, tag, license = "".kstring
+    all,author,owner, name, tag, license = "".kstring
 
 proc parseQuery*(s: kstring): Query =
   result = Query()
@@ -24,6 +24,10 @@ proc parseQuery*(s: kstring): Query =
         result.name = v
       of "tag":
         result.tag = v
+      of "author":
+        result.author = v
+      of "owner":
+        result.owner = v
       # license data not currently supported in main search
       # of "license":
         # result.license = v
@@ -37,20 +41,31 @@ proc genericSearchString(p: NimPackage): kstring =
 func norm(s: kstring): string =
   ($s).replace("-").replace(" ").normalize()
 
-func `!->`(a, b: kstring): bool =
-  norm(a) notin norm(b)
-
-proc hasTag(pkg: NimPackage, tag: string): bool =
-  if tag == "": return false
-  let normTag = norm(tag)
+proc filterTag(q: Query, pkg: NimPackage): bool =
+  if q.tag == "": return false
+  let normTag = norm(q.tag)
   for t in pkg.tags:
     if normTag == norm(t):
       return false
   return true
 
+proc filterAuthor*(q: Query, pkg: NimPackage): bool =
+  if q.author == "": return false
+  let author = norm(pkg.author.kstring)
+  if author == "": return true
+  norm(q.author) != author and norm(q.owner) != author
+
+proc filterName(q: Query, pkg: NimPackage): bool =
+  if q.name == "": return false
+  norm(q.name) != norm(pkg.name)
+
 proc `~=`*(q: Query, pkg: NimPackage): bool =
   let searchStr = pkg.genericSearchString()
-  if (q.name !-> pkg.name) or (q.license !-> pkg.license) or pkg.hasTag($q.tag):
+  if filterName(q, pkg):
+    return
+  if filterAuthor(q, pkg):
+    return
+  if filterTag(q, pkg):
     return
   if q.all.toLowerAscii() in searchStr:
     return true

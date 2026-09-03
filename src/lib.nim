@@ -164,6 +164,12 @@ proc canonicalUrl*(p: NimPackage): kstring =
   uri.query = ""
   return uri.jss
 
+proc author*(p: NimPackage): string =
+  if p.isAlias: return ""
+  let parts = parseUri($p.canonicalUrl).path.split('/')
+  if parts.len > 1:
+    return parts[1].replace("~", "")
+
 type
   SortMethod* = enum
     smVersionAgeRecent = "version"
