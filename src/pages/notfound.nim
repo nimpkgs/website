@@ -1,5 +1,5 @@
-import karax/[karaxdsl, vdom]
 import ../lib
+import karax/[karaxdsl, vdom]
 
 proc render*(): VNode =
   setTitle("404")

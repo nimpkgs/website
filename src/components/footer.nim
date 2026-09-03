@@ -1,7 +1,6 @@
-import std/[times]
-import karax/[kbase, karaxdsl, vdom, jstrutils]
-
+import std/times
 import ../lib
+import karax/[jstrutils, karaxdsl, kbase, vdom]
 
 const packagesGitUrlBase = "https://github.com/nim-lang/packages/blob/".kstring
 

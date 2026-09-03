@@ -1,6 +1,6 @@
 import std/strutils
+import components/[button, footer, header, loading]
 import karax/[karax, karaxdsl, vdom]
-import components/[header, button, footer, loading]
 import pages/pages
 import ./lib
 

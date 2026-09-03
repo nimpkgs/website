@@ -1,6 +1,5 @@
-import karax/[kbase, karaxdsl, vdom]
-
 import ../lib
+import karax/[karaxdsl, kbase, vdom]
 
 const headerLinks = [
   ("/#/search", "search"),

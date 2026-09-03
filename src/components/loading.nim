@@ -1,4 +1,4 @@
-import karax/[kbase, karaxdsl, vdom]
+import karax/[karaxdsl, kbase, vdom]
 
 proc loading*(msg: kstring = ""): VNode =
   buildHtml(tdiv(class = "flex h-50")):

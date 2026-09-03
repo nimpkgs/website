@@ -1,12 +1,11 @@
 import std/[
-  asyncjs, jsconsole, jsfetch, sequtils, sugar, tables,
-  strutils, uri, random, macros ,algorithm, times, options
+  algorithm, asyncjs, jsconsole, jsfetch, macros, options, random,
+  sequtils, strutils, sugar, tables, times, uri
 ]
-import std/jsffi except `&`
-import karax/[kbase, karax, vdom, kdom, jstrutils]
 import jsony
-
-export algorithm, tables, times, asyncjs, sugar, options, jsconsole
+import karax/[jstrutils, karax, kbase, kdom, vdom]
+export algorithm, asyncjs, jsconsole, options, sugar, tables, times
+import std/jsffi except `&`
 
 proc jss*[T](arg: T): kstring = ($arg).kstring
 proc jss*(arg: kstring): kstring = arg

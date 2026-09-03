@@ -1,9 +1,7 @@
-import std/[algorithm, strutils, sequtils, dom, uri, jsffi]
-
-import karax/[kbase, karax, karaxdsl, vdom, kdom]
-
+import std/[algorithm, dom, jsffi, sequtils, strutils, uri]
 import ../lib
 import ../components/[package, search]
+import karax/[karax, karaxdsl, kbase, kdom, vdom]
 
 # TODO: better connect search/query/filters/uri and pgCtx
 

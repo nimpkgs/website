@@ -1,7 +1,6 @@
-import std/[algorithm, sequtils, tables, uri, strutils, times]
-import karax/[kbase, karaxdsl, vdom, jstrutils]
-
+import std/[algorithm, sequtils, strutils, tables, times, uri]
 import ../lib
+import karax/[jstrutils, karaxdsl, kbase, vdom]
 
 type
   Metrics = object

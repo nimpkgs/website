@@ -1,6 +1,6 @@
-import std/[strutils]
-import karax/[kbase, karax, karaxdsl, vdom, jstrutils]
+import std/strutils
 import ../lib
+import karax/[jstrutils, karax, karaxdsl, kbase, vdom]
 
 type
   Query* = object

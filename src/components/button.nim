@@ -1,7 +1,6 @@
 import std/[dom, sugar]
-import karax/[karax, karaxdsl, vdom, vstyles]
-
 import ../lib
+import karax/[karax, karaxdsl, vdom, vstyles]
 
 proc showScrollToTop() =
   # TODO: only show button when scrolling up

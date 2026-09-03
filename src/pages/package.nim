@@ -1,8 +1,7 @@
 import std/[algorithm, sugar]
-import karax/[kbase, karax, karaxdsl, kdom, vdom, jstrutils]
-
-import ../components/[tag, package]
 import ../lib
+import ../components/[package, tag]
+import karax/[jstrutils, karax, karaxdsl, kbase, kdom, vdom]
 
 proc openLink(link: kstring) {.kcall.} =
   discard open(window, link, "_self")
